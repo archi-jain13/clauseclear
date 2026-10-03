@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        # sentence-transformers pulls in torch; the store falls back to TF-IDF without it.
+        run: |
+          grep -v '^sentence-transformers' requirements.txt > requirements-ci.txt
+          python -m pip install -r requirements-ci.txt httpx
+      - name: Run tests
+        run: python -m unittest discover -s tests
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install audit tools
+        run: python -m pip install pip-audit bandit
+      - name: Audit dependencies
+        run: pip-audit -r requirements.txt
+      - name: Static security scan
+        run: bandit -r backend -ll
