@@ -1,0 +1,114 @@
+[
+  {
+    "id": "std-sec-01",
+    "category": "security_deposit",
+    "title": "Standard Residential Security Deposit",
+    "baseline_text": "Tenant shall deposit with Landlord the sum of $1,500 (equivalent to one month's rent) as security for the full and faithful performance of Tenant's obligations under this Lease. Within thirty (30) days of vacating the premises, Landlord shall return the full deposit less any documented deductions for actual damages beyond reasonable wear and tear, accompanied by an itemized written statement of deductions.",
+    "standard_acceptable_range": "1-2 months rent deposit; 14-30 day refund period; itemized deduction receipts; standard wear and tear excluded.",
+    "typical_red_flags": ["Deposit over 2 months rent", "Non-refundable deposit fee", "Deductions for normal wear and tear", "Refund timeline exceeding 30-45 days", "Unilateral forfeiture on minor infractions"]
+  },
+  {
+    "id": "std-sec-02",
+    "category": "security_deposit",
+    "title": "Security Deposit Interest and Escrow Holding",
+    "baseline_text": "The Security Deposit shall be held in an interest-bearing escrow account at a federally insured financial institution located within the State. Landlord shall provide Tenant with the name and location of the depository institution within 30 days of receipt. Any accrued interest shall be credited to Tenant annually or upon termination of tenancy as required by applicable state law.",
+    "standard_acceptable_range": "Held in separate escrow account; annual interest or statutory rate paid to tenant.",
+    "typical_red_flags": ["Commingling deposit with landlord personal funds", "No disclosure of depository account", "No interest payment in jurisdictions mandating it"]
+  },
+  {
+    "id": "std-term-01",
+    "category": "termination_and_notice",
+    "title": "Standard Lease Termination and Notice Period",
+    "baseline_text": "Either party may terminate this Lease at the expiration of the initial term by providing at least thirty (30) days prior written notice to the other party. In the event Tenant vacates prior to the expiration date without cause, Tenant shall remain liable for rent until the premises are re-rented, provided Landlord makes commercially reasonable efforts to mitigate damages by marketing the premises.",
+    "standard_acceptable_range": "30 to 60 days advance written notice; statutory duty of landlord to mitigate damages.",
+    "typical_red_flags": ["Automatic renewal without notice requirement", "Over 90 days required notice", "No landlord duty to mitigate damages upon vacancy", "Immediate acceleration of all future lease payments without credit for re-renting"]
+  },
+  {
+    "id": "std-term-02",
+    "category": "termination_and_notice",
+    "title": "Notice of Default and Right to Cure",
+    "baseline_text": "In the event of any alleged breach of this Agreement by Tenant, including non-payment of rent, Landlord shall deliver written notice specifying the default. Tenant shall have fourteen (14) days from receipt of such notice to cure monetary defaults and twenty-one (21) days to cure non-monetary defaults prior to Landlord exercising any remedies or filing eviction proceedings.",
+    "standard_acceptable_range": "3 to 14 days cure notice for non-payment; 14 to 30 days for general lease cure.",
+    "typical_red_flags": ["Zero-day notice eviction waiver", "Immediate termination without right to cure", "Confession of judgment / waiver of judicial process"]
+  },
+  {
+    "id": "std-maint-01",
+    "category": "maintenance_and_repairs",
+    "title": "Standard Landlord Habitability and Structural Maintenance",
+    "baseline_text": "Landlord agrees to maintain the building structure, roof, foundations, exterior walls, and common areas, as well as plumbing, electrical, heating, ventilation, and air conditioning systems in good working order in compliance with all applicable health and housing building codes. Landlord shall promptly perform necessary repairs within a reasonable time upon receipt of written notice from Tenant.",
+    "standard_acceptable_range": "Landlord responsible for major systems, structural integrity, and warranty of habitability.",
+    "typical_red_flags": ["Tenant responsible for major HVAC/roof/plumbing replacement", "Waiver of warranty of habitability", "Shift of capital structural maintenance to residential tenant"]
+  },
+  {
+    "id": "std-maint-02",
+    "category": "maintenance_and_repairs",
+    "title": "Tenant Routine Maintenance and Cleanliness Duties",
+    "baseline_text": "Tenant shall keep the Premises in a clean, sanitary condition and perform routine minor maintenance, including replacing standard interior light bulbs, replacing HVAC air filters quarterly, and promptly reporting any leaks or malfunctions to Landlord. Tenant shall be financially responsible for repairs necessitated by Tenant's own negligence or intentional misuse.",
+    "standard_acceptable_range": "Tenant handles light bulbs/filters and keeps unit clean; responsible for tenant-caused damage.",
+    "typical_red_flags": ["Mandatory fee for standard repair requests", "Tenant pays deductible on all structural repairs", "Mandatory tenant payment for pre-existing conditions"]
+  },
+  {
+    "id": "std-late-01",
+    "category": "late_fees_and_penalties",
+    "title": "Reasonable Rent Late Fee and Grace Period",
+    "baseline_text": "Rent is due on the first (1st) day of each calendar month. If rent is not received by Landlord by 11:59 PM on the fifth (5th) calendar day of the month (the Grace Period), Tenant shall pay a late fee equal to five percent (5%) of the overdue balance or $50, whichever is less. No compounding daily interest or multiple cumulative late charges shall be levied for the same billing period.",
+    "standard_acceptable_range": "3 to 5-day grace period; late fee capped between $25-$50 or 5% of monthly rent.",
+    "typical_red_flags": ["No grace period", "Compounding daily penalty (e.g. $50/day)", "Late fees exceeding 10% of monthly rent", "Immediate forfeiture on 1 day late payment"]
+  },
+  {
+    "id": "std-entry-01",
+    "category": "entry_and_privacy",
+    "title": "Landlord Right of Entry and Notice Requirement",
+    "baseline_text": "Landlord and Landlord's authorized agents shall have the right to enter the Premises for inspection, repairs, maintenance, or showing the property to prospective tenants/buyers upon providing at least twenty-four (24) hours advance written or electronic notice to Tenant. All entries shall take place during normal business hours (8:00 AM to 6:00 PM) on weekdays, except in the case of genuine emergency involving imminent threat to life or property.",
+    "standard_acceptable_range": "24 to 48 hours advance notice; reasonable daytime hours; emergency exception.",
+    "typical_red_flags": ["Unannounced entry at any time without notice", "Waiver of tenant's right to quiet enjoyment", "Mandatory 24/7 access without prior coordination"]
+  },
+  {
+    "id": "std-sublet-01",
+    "category": "subletting_and_assignment",
+    "title": "Subletting and Assignment with Landlord Consent",
+    "baseline_text": "Tenant may not sublet the Premises or assign this Lease in whole or in part without the prior written consent of Landlord. Landlord agrees not to unreasonably withhold, condition, or delay consent to a qualified prospective subtenant meeting standard background and credit screening criteria. Landlord may charge a reasonable administrative screening fee not to exceed $75.",
+    "standard_acceptable_range": "Consent required but cannot be unreasonably withheld; reasonable application screening fee.",
+    "typical_red_flags": ["Absolute ban on sublease with exorbitant penalty", "Exorbitant transfer fee (e.g. $1000+)", "Landlord retains full sublet rent profit while continuing tenant liability"]
+  },
+  {
+    "id": "std-rent-01",
+    "category": "rent_escalation_and_renewal",
+    "title": "Rent Escalation and Lease Renewal Terms",
+    "baseline_text": "Upon expiration of the initial term, if both parties agree to renew the Lease, any proposed adjustment in monthly rent shall be communicated to Tenant in writing at least sixty (60) days prior to the expiration date. In no event shall rent increase exceed the Consumer Price Index (CPI) or five percent (5%), whichever is lower, unless substantial documented capital improvements have been made.",
+    "standard_acceptable_range": "60 days notice of rent increases; tied to CPI or reasonable standard inflation 3-5%.",
+    "typical_red_flags": ["Uncapped mid-lease rent increases at landlord discretion", "Unannounced automatic rent spikes of 20%+", "Mandatory non-cancelable multi-year renewal extensions without consent"]
+  },
+  {
+    "id": "std-liab-01",
+    "category": "indemnification_and_liability",
+    "title": "Mutual Indemnification and Limitation of Liability",
+    "baseline_text": "Tenant and Landlord shall mutually indemnify and hold each other harmless from claims, liabilities, damages, or costs resulting directly from the other party's gross negligence, willful misconduct, or material breach of this Agreement. Neither party shall be liable for indirect, punitive, or consequential damages. Nothing herein shall waive Tenant's statutory protections under state tenant rights legislation.",
+    "standard_acceptable_range": "Mutual indemnification for negligence/breach; preservation of statutory tenant protections.",
+    "typical_red_flags": ["One-sided indemnification holding tenant liable for landlord negligence", "Complete waiver of landlord liability for injury or property loss caused by property defects", "Waiver of jury trial and class action rights"]
+  },
+  {
+    "id": "std-disp-01",
+    "category": "dispute_resolution_and_governing_law",
+    "title": "Governing Law and Mutual Attorney's Fees",
+    "baseline_text": "This Agreement shall be governed by and construed in accordance with the laws of the State in which the Premises are located. In the event of legal proceedings arising out of this Agreement, the prevailing party shall be entitled to recover reasonable attorney's fees, court costs, and related expenses from the non-prevailing party.",
+    "standard_acceptable_range": "Local jurisdiction of property; reciprocal attorney fee recovery for prevailing party.",
+    "typical_red_flags": ["Out-of-state jurisdiction far from property", "Unilateral attorney fee clause favoring landlord only", "Mandatory binding arbitration in distant location with high filing fees"]
+  },
+  {
+    "id": "std-loan-01",
+    "category": "loan_interest_and_usury",
+    "title": "Fixed APR and Calculation of Interest",
+    "baseline_text": "The Loan shall accrue interest on the unpaid principal balance at a fixed annual percentage rate (APR) of 7.5% per annum. Interest shall be calculated on a 365-day basis using standard simple interest amortization. In no event shall the total finance charge exceed the maximum legal usury rate permitted under applicable state and federal lending laws.",
+    "standard_acceptable_range": "Fixed or clearly defined index-linked APR; compliance with statutory usury rate caps.",
+    "typical_red_flags": ["Interest rates exceeding statutory usury limits (e.g. >36% APR for consumer loans)", "Hidden variable rate triggers without caps", "Rule of 78s front-loaded interest on consumer loans"]
+  },
+  {
+    "id": "std-loan-02",
+    "category": "loan_prepayment_and_default",
+    "title": "Prepayment Without Penalty and Acceleration Notice",
+    "baseline_text": "Borrower may prepay the principal amount of this Note in whole or in part at any time without penalty, premium, or additional fee. In the event of default in payment, Lender shall provide Borrower with at least thirty (30) days written notice of default and opportunity to cure before accelerating the maturity of the outstanding debt.",
+    "standard_acceptable_range": "No prepayment penalty for consumer loans; 30-day written notice before debt acceleration.",
+    "typical_red_flags": ["Punitive prepayment penalty (e.g. charging all unearned future interest upon early payoff)", "Immediate debt acceleration without notice or cure period", "Confession of judgment / cognovit note"]
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "test-01",
+    "clause_title": "Security Deposit Forfeiture",
+    "clause_text": "Tenant agrees that the entire security deposit of $2,000 shall be deemed non-refundable and forfeited in full if Tenant vacates before the 12-month term, regardless of whether Landlord immediately re-rents the unit.",
+    "ground_truth_category": "security_deposit",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["Non-refundable deposit", "Forfeiture without mitigation of damages"]
+  },
+  {
+    "id": "test-02",
+    "clause_title": "Standard Deposit Return",
+    "clause_text": "Landlord shall return the security deposit within twenty-one (21) days of surrender of the premises, together with an itemized accounting of any deductions for damages exceeding normal wear and tear.",
+    "ground_truth_category": "security_deposit",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-03",
+    "clause_title": "Unannounced Landlord Entry",
+    "clause_text": "Landlord and Landlord's agents reserve the absolute right to enter the leased premises at any time 24/7 without prior notice for routine inspections, maintenance, or showing the unit to prospective buyers.",
+    "ground_truth_category": "entry_and_privacy",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["Unannounced entry at any time", "Waiver of quiet enjoyment"]
+  },
+  {
+    "id": "test-04",
+    "clause_title": "Standard Right of Entry",
+    "clause_text": "Landlord shall provide at least twenty-four (24) hours advance written notice prior to entering the premises for inspections or non-emergency repairs during regular business hours (9:00 AM to 5:00 PM).",
+    "ground_truth_category": "entry_and_privacy",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-05",
+    "clause_title": "Extortionate Daily Late Charge",
+    "clause_text": "Rent is due on the 1st of the month. If not received by 5:00 PM on the 1st, a late fee of $75 per day shall accumulate until all overdue rent is received in full. There is no grace period.",
+    "ground_truth_category": "late_fees_and_penalties",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["No grace period", "Compounding $75/day late fee"]
+  },
+  {
+    "id": "test-06",
+    "clause_title": "Standard Late Fee with Grace Period",
+    "clause_text": "If rent is received after the fifth (5th) day of the calendar month, Tenant shall pay a flat late fee of $40. No additional daily penalties shall accrue.",
+    "ground_truth_category": "late_fees_and_penalties",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-07",
+    "clause_title": "Habitability Waiver and Major HVAC Shift",
+    "clause_text": "Tenant explicitly waives any and all implied warranties of habitability and agrees to bear full financial cost for replacing or repairing the roof, furnace, and HVAC system during the tenancy.",
+    "ground_truth_category": "maintenance_and_repairs",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["Waiver of warranty of habitability", "Tenant pays major structural and HVAC replacement"]
+  },
+  {
+    "id": "test-08",
+    "clause_title": "Standard Maintenance Distribution",
+    "clause_text": "Landlord agrees to maintain the roof, foundation, exterior walls, and plumbing and electrical systems in safe operating condition. Tenant is responsible for replacing standard light bulbs and keeping the unit clean.",
+    "ground_truth_category": "maintenance_and_repairs",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-09",
+    "clause_title": "One-Sided Indemnification for Landlord Negligence",
+    "clause_text": "Tenant agrees to defend, indemnify, and hold harmless Landlord against any and all claims, bodily injuries, or damages occurring on the property, even if caused by Landlord's own gross negligence or willful misconduct.",
+    "ground_truth_category": "indemnification_and_liability",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["Indemnification of landlord's own gross negligence"]
+  },
+  {
+    "id": "test-10",
+    "clause_title": "Mutual Indemnification",
+    "clause_text": "Each party shall indemnify and hold harmless the other party from and against claims and liabilities arising directly from the indemnifying party's negligent acts or material breach of this Lease.",
+    "ground_truth_category": "indemnification_and_liability",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-11",
+    "clause_title": "Prepayment Penalty with Acceleration",
+    "clause_text": "In the event Borrower pays off this promissory note prior to maturity, Borrower shall pay a prepayment penalty equal to all remaining unearned interest through the 5-year term. Failure to pay on the due date triggers immediate acceleration without notice.",
+    "ground_truth_category": "loan_prepayment_and_default",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["Punitive prepayment penalty charging all future unearned interest", "Immediate debt acceleration without notice"]
+  },
+  {
+    "id": "test-12",
+    "clause_title": "Standard Loan Prepayment Without Penalty",
+    "clause_text": "Borrower may prepay the principal amount of this loan in whole or in part at any time without penalty or premium. Lender shall apply prepayments directly to principal reduction.",
+    "ground_truth_category": "loan_prepayment_and_default",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-13",
+    "clause_title": "High Usury Interest Rate",
+    "clause_text": "The loan shall bear interest at an annual percentage rate (APR) of 48% compounded monthly. Any late installment shall trigger a default APR of 65%.",
+    "ground_truth_category": "loan_interest_and_usury",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "high",
+    "expected_concerns": ["Interest rate exceeds statutory usury limits (48% APR)"]
+  },
+  {
+    "id": "test-14",
+    "clause_title": "Standard Fixed APR",
+    "clause_text": "The unpaid principal shall accrue simple interest at a fixed rate of 6.25% per annum computed on a 365-day basis.",
+    "ground_truth_category": "loan_interest_and_usury",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-15",
+    "clause_title": "Severe Subletting Ban and Penalty",
+    "clause_text": "Subletting is strictly prohibited under any circumstances. Any attempt to sublet or host an unauthorized guest for more than 48 hours shall result in immediate eviction and a $1,500 penalty fee.",
+    "ground_truth_category": "subletting_and_assignment",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "medium",
+    "expected_concerns": ["Absolute sublet ban", "Aggressive unauthorized guest forfeiture fee"]
+  },
+  {
+    "id": "test-16",
+    "clause_title": "Standard Subletting with Consent",
+    "clause_text": "Tenant may sublet the premises with the prior written consent of Landlord, which consent shall not be unreasonably withheld or delayed for qualified applicants.",
+    "ground_truth_category": "subletting_and_assignment",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-17",
+    "clause_title": "Automatic Lease Renewal and Strict Notice",
+    "clause_text": "This lease shall automatically renew for an additional 12 months at a 15% rent increase unless Tenant provides certified written notice to vacate at least ninety (90) days prior to expiration.",
+    "ground_truth_category": "rent_escalation_and_renewal",
+    "ground_truth_unusual": true,
+    "ground_truth_risk_level": "medium",
+    "expected_concerns": ["90-day strict notice window", "Automatic 15% rent hike"]
+  },
+  {
+    "id": "test-18",
+    "clause_title": "Standard Notice of Termination",
+    "clause_text": "Either party may terminate this agreement at the conclusion of the initial term by providing thirty (30) days advance written notice.",
+    "ground_truth_category": "termination_and_notice",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": []
+  },
+  {
+    "id": "test-19",
+    "clause_title": "Standard Joint and Several Liability Boilerplate",
+    "clause_text": "If more than one Tenant signs this Lease, the obligations of each Tenant shall be joint and several liability for all rent and covenants under this Agreement.",
+    "ground_truth_category": "indemnification_and_liability",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": ["Standard boilerplate often mistaken for predatory"]
+  },
+  {
+    "id": "test-20",
+    "clause_title": "Standard Severability Clause",
+    "clause_text": "If any provision of this Lease is held invalid or unenforceable by a court of competent jurisdiction, such invalidity shall not affect the validity or enforceability of any other provision.",
+    "ground_truth_category": "dispute_resolution_and_governing_law",
+    "ground_truth_unusual": false,
+    "ground_truth_risk_level": "low",
+    "expected_concerns": ["Standard boilerplate"]
+  }
+]

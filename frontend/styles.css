@@ -1,0 +1,1151 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* =====================================================
+   ROOT DESIGN TOKENS — Warm, human-feeling palette
+   ===================================================== */
+:root {
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Lora', Georgia, serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+  /* Paper-warm background */
+  --bg-app:       #F7F5F0;
+  --bg-sidebar:   #EFEDE8;
+  --bg-card:      #FFFFFF;
+  --bg-warm:      #FBF9F5;
+
+  /* Ink-inspired text */
+  --text-ink:     #1A1814;
+  --text-primary: #2C2A26;
+  --text-secondary:#5A5751;
+  --text-muted:   #8A8782;
+
+  /* Borders — soft, not sterile */
+  --border:       rgba(0,0,0,0.09);
+  --border-warm:  rgba(0,0,0,0.06);
+
+  /* Signature teal — trustworthy, not clinical */
+  --teal:         #0D9488;
+  --teal-dark:    #0A7A6E;
+  --teal-deeper:  #085E56;
+  --teal-light:   #EDFAF8;
+  --teal-border:  #A7F0E8;
+
+  /* Risk colors — gentle, not alarming */
+  --ok-text:   #16803C;
+  --ok-bg:     #F0FDF4;
+  --ok-border: #BBF7D0;
+
+  --caution-text:   #B45309;
+  --caution-bg:     #FFFBEB;
+  --caution-border: #FDE68A;
+
+  --danger-text:   #DC2626;
+  --danger-bg:     #FFF1F2;
+  --danger-border: #FECACA;
+
+  /* Easing curves */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out:    cubic-bezier(0.22, 0.68, 0, 1.2);
+}
+
+/* =====================================================
+   BASE RESET & TYPOGRAPHY
+   ===================================================== */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Human touch: use serif display font for h1-h2 headings */
+h1, h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* =====================================================
+   SCROLLBARS — almost invisible
+   ===================================================== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+/* =====================================================
+   SURFACE CARDS — layered depth, natural shadows
+   ===================================================== */
+.surface-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 4px 16px rgba(0,0,0,0.04),
+    0 0 0 0.5px rgba(0,0,0,0.03);
+  transition: transform 0.22s var(--ease-smooth),
+              box-shadow 0.22s var(--ease-smooth);
+}
+
+.surface-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),
+    0 10px 30px rgba(0,0,0,0.07),
+    0 0 0 0.5px rgba(0,0,0,0.04);
+}
+
+/* =====================================================
+   SIDEBAR & NAVIGATION
+   ===================================================== */
+aside {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+}
+
+aside.app-sidebar.flex.flex-col {
+  width: 320px;
+  height: 100vh;
+  flex-direction: row;
+  background: #F4F4F0;
+}
+
+.sidebar-icon-rail {
+  width: 72px;
+  flex: 0 0 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 10px;
+  overflow-y: auto;
+  background: #191B1E;
+  color: #F8FAFC;
+}
+
+.sidebar-logo {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  padding: 2px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+}
+
+.sidebar-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
+  object-fit: cover;
+}
+
+.sidebar-rail-nav,
+.sidebar-rail-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-rail-nav {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.sidebar-rail-bottom {
+  margin-top: auto;
+}
+
+.sidebar-rail-link {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #C7CBD1;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.sidebar-rail-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-rail-link:hover,
+.sidebar-rail-link.is-active {
+  background: #363A3F;
+  color: #FFFFFF;
+}
+
+.sidebar-content {
+  width: 248px;
+  flex: 1 1 0%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #F4F4F0;
+}
+
+.sidebar-panel-logo {
+  display: none;
+}
+
+.nav-link-active {
+  background: #fff !important;
+  color: var(--teal) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.nav-link-active i { color: var(--teal) !important; }
+
+/* =====================================================
+   ANIMATED UNDERLINE — organic, hand-drawn style
+   ===================================================== */
+.underline-organic {
+  position: relative;
+  display: inline;
+}
+.underline-organic::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #0D9488 0%, #14B8A6 60%, #5EEAD4 100%);
+  border-radius: 99px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-smooth);
+}
+.underline-organic:hover::after { transform: scaleX(1); }
+
+/* =====================================================
+   RISK INDICATORS — left accent bars
+   ===================================================== */
+.risk-high {
+  border-left: 3px solid #F87171 !important;
+  background: #FFFFFF;
+}
+.risk-high:hover { background: #FFF6F6; }
+
+.risk-medium {
+  border-left: 3px solid #FBBF24 !important;
+  background: #FFFFFF;
+}
+.risk-medium:hover { background: #FFFDF5; }
+
+.risk-low {
+  border-left: 3px solid #34D399 !important;
+  background: #FFFFFF;
+}
+.risk-low:hover { background: #F6FCF9; }
+
+.clause-card-selected {
+  outline: 2px solid var(--teal) !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.08) !important;
+}
+
+/* =====================================================
+   PAGE-ENTER ANIMATION (stagger elements on load)
+   ===================================================== */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-right {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Hero entrance — cascading stagger */
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  animation: fade-up 0.55s var(--ease-smooth) forwards;
+}
+
+/* Tab transition */
+.tab-animate {
+  animation: fade-up 0.3s var(--ease-smooth) both;
+}
+
+/* Clause card stagger */
+@keyframes card-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.clause-card-animate {
+  animation: card-fade-up 0.32s var(--ease-smooth) both;
+}
+
+/* Inspector panel slide */
+@keyframes inspector-slide {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.inspector-animate {
+  animation: inspector-slide 0.28s var(--ease-smooth) both;
+}
+
+/* =====================================================
+   HERO SECTION — human personality styles
+   ===================================================== */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #F0FDF9 0%, #EDFAF8 100%);
+  border: 1px solid rgba(13,148,136,0.2);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0A7A6E;
+  animation: fade-in 0.6s var(--ease-smooth) 0.1s both;
+}
+
+/* Squiggly underline on hero — feels hand-drawn */
+.squiggle {
+  text-decoration: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='4'%3E%3Cpath d='M0 3 Q5 0 10 3 Q15 6 20 3' stroke='%230D9488' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom 0px left;
+  background-size: 18px 4px;
+  padding-bottom: 5px;
+  color: var(--teal);
+}
+
+/* =====================================================
+   TRUST STRIP — horizontal stats row
+   ===================================================== */
+.trust-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #FDFCF9 0%, #F9F7F3 100%);
+}
+
+.trust-stat {
+  transition: transform 0.2s var(--ease-spring);
+}
+.trust-stat:hover { transform: translateY(-3px); }
+
+/* =====================================================
+   STEP CARDS (How It Works)
+   ===================================================== */
+.step-card {
+  position: relative;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  transition: all 0.25s var(--ease-smooth);
+  overflow: hidden;
+}
+
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal) 0%, #14B8A6 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-smooth);
+}
+
+.step-card:hover::before { transform: scaleX(1); }
+
+.step-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.step-number {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal-light) 0%, #D0F5F1 100%);
+  border: 1px solid var(--teal-border);
+  color: var(--teal-dark);
+  font-weight: 700;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  transition: transform 0.2s var(--ease-spring);
+}
+.step-card:hover .step-number { transform: scale(1.1) rotate(-3deg); }
+
+/* =====================================================
+   FEATURE CARDS
+   ===================================================== */
+.feature-card {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  transition: all 0.25s var(--ease-smooth);
+}
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+  border-color: rgba(13,148,136,0.2);
+}
+
+.feature-icon {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s var(--ease-spring);
+}
+.feature-card:hover .feature-icon { transform: scale(1.08) rotate(-3deg); }
+
+/* =====================================================
+   STORY CALLOUT (narrative section)
+   ===================================================== */
+.story-card {
+  background: linear-gradient(145deg, #FDFCF9 0%, #F4FAF9 50%, #F0FAF7 100%);
+  border: 1px solid rgba(13,148,136,0.15);
+  border-radius: 22px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.story-card::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-family: var(--font-display);
+  font-size: 120px;
+  color: rgba(13,148,136,0.07);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =====================================================
+   UPLOAD DROPZONE
+   ===================================================== */
+.upload-dropzone {
+  border: 2px dashed #CBD5E1;
+  border-radius: 18px;
+  background: #FDFCF9;
+  transition: all 0.25s var(--ease-smooth);
+  cursor: pointer;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.drag-over {
+  border-color: var(--teal);
+  background: var(--teal-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(13,148,136,0.1);
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+.btn-primary {
+  background: linear-gradient(135deg, #0D9488 0%, #0A7A6E 100%);
+  color: #fff;
+  border-radius: 11px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 10px rgba(13,148,136,0.3), 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s var(--ease-spring);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 6px 20px rgba(13,148,136,0.4), 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 1px 4px rgba(13,148,136,0.2);
+}
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid #D1D5DB;
+  color: var(--text-primary);
+  border-radius: 11px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s var(--ease-smooth);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.btn-secondary:hover {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.btn-pill-example {
+  background: rgba(0,0,0,0.04);
+  color: var(--text-secondary);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.18s ease;
+}
+.btn-pill-example:hover {
+  background: #E5E7EB;
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   PRODUCT MOCKUP CARD (hero preview)
+   ===================================================== */
+.mockup-window {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.06),
+    0 20px 60px rgba(0,0,0,0.06),
+    0 0 0 1px rgba(0,0,0,0.04);
+  animation: scale-in 0.6s var(--ease-smooth) 0.4s both;
+}
+
+.mockup-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+/* Subtle pulsing glow on risk cards in mockup */
+@keyframes risk-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(239,68,68,0.08); }
+}
+.mockup-risk-card {
+  animation: risk-glow 3s ease-in-out infinite;
+}
+
+/* =====================================================
+   ACCENT CALLOUT BOXES
+   ===================================================== */
+.callout-plain-english {
+  background: var(--teal-light);
+  border: 1px solid var(--teal-border);
+  border-radius: 12px;
+}
+.callout-questions {
+  background: #FEFCE8;
+  border: 1px solid #FEF08A;
+  border-radius: 12px;
+}
+.callout-standard-baseline {
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.callout-red-flag {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: 12px;
+}
+
+/* =====================================================
+   STAT COUNTER FLASH
+   ===================================================== */
+@keyframes stat-pulse {
+  0%   { color: var(--teal); transform: scale(1.1); }
+  100% { color: inherit; transform: scale(1); }
+}
+.stat-flash { animation: stat-pulse 0.45s ease both; }
+
+/* =====================================================
+   RED FLAG SLIDE IN
+   ===================================================== */
+@keyframes flag-slide {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.flag-animate { animation: flag-slide 0.25s ease both; }
+
+/* =====================================================
+   AUTH MODAL
+   ===================================================== */
+.auth-tab-btn {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.auth-tab-btn:hover { color: var(--text-primary); }
+.auth-tab-btn.active {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+}
+
+/* =====================================================
+   DROPDOWN
+   ===================================================== */
+.dropdown-card {
+  box-shadow:
+    0 4px 6px rgba(0,0,0,0.04),
+    0 12px 28px rgba(0,0,0,0.1);
+  border-radius: 16px;
+}
+
+/* =====================================================
+   HISTORY CARD HOVER
+   ===================================================== */
+.history-card { transition: all 0.2s ease; }
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border-color: rgba(13,148,136,0.3);
+}
+
+/* =====================================================
+   TOAST NOTIFICATION
+   ===================================================== */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.toast-notification {
+  animation: toast-in 0.3s var(--ease-smooth) forwards;
+  border-radius: 12px;
+}
+
+/* =====================================================
+   SCROLL-TRIGGERED REVEAL (via IntersectionObserver)
+   ===================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.55s var(--ease-smooth), transform 0.55s var(--ease-smooth);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger variants */
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* =====================================================
+   FLOATING ANIMATION on icons
+   ===================================================== */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+.float-icon { animation: float 3s ease-in-out infinite; }
+
+/* =====================================================
+   SHIMMER LOADING placeholder
+   ===================================================== */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #F0EDE8 25%, #E8E4DD 50%, #F0EDE8 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: 8px;
+}
+
+/* =====================================================
+   SPINNING LOADER
+   ===================================================== */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin-icon { animation: spin 1s linear infinite; }
+
+/* =====================================================
+   INPUT FIELDS — warm focus ring
+   ===================================================== */
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--teal) !important;
+  box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+}
+
+/* =====================================================
+   MISC UTILITIES
+   ===================================================== */
+.ink-text { font-family: var(--font-display); }
+
+.glass-card {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Subtle paper texture on hero */
+.paper-bg {
+  background-color: var(--bg-app);
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(13,148,136,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(13,148,136,0.04) 0%, transparent 40%);
+}
+
+/* =====================================================
+   CURSOR POINTER on interactive elements
+   ===================================================== */
+button, [role="button"], label[for] { cursor: pointer; }
+
+/* =====================================================
+   STEPPED SCANNER ANIMATION (Document Analyzer Loading)
+   ===================================================== */
+.scan-beam-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.scan-beam-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #0D9488 50%, transparent 100%);
+  box-shadow: 0 0 14px #0D9488, 0 0 4px #14B8A6;
+  animation: scan-vertical 2.2s ease-in-out infinite alternate;
+}
+@keyframes scan-vertical {
+  0% { transform: translateY(0); opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { transform: translateY(120px); opacity: 0.3; }
+}
+
+.scanner-step-pill {
+  transition: all 0.35s var(--ease-smooth);
+}
+.scanner-step-pill.active {
+  background: #EDFAF8;
+  border-color: #A7F0E8;
+  color: #0A7A6E;
+  box-shadow: 0 2px 8px rgba(13,148,136,0.12);
+}
+.scanner-step-pill.completed {
+  background: #F0FDF4;
+  border-color: #BBF7D0;
+  color: #166534;
+}
+
+/* =====================================================
+   CIRCULAR HEALTH GAUGE & GRADE BADGES
+   ===================================================== */
+.health-gauge-ring {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s var(--ease-smooth);
+}
+
+.grade-stamp {
+  font-family: var(--font-display);
+  border: 2px solid currentColor;
+  border-radius: 12px;
+  transform: rotate(-3deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: transform 0.25s var(--ease-spring);
+}
+.grade-stamp:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+/* =====================================================
+   TACTILE INGESTION & SAMPLE CARDS
+   ===================================================== */
+.sample-preset-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  transition: all 0.22s var(--ease-smooth);
+  cursor: pointer;
+}
+.sample-preset-card:hover {
+  border-color: var(--teal);
+  background: #FBFDFD;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(13,148,136,0.08);
+}
+.sample-preset-card:active {
+  transform: translateY(0);
+}
+
+/* =====================================================
+   FAIR TERMS GUIDE (Encyclopedia Styling)
+   ===================================================== */
+.kb-category-pill {
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: #FFFFFF;
+  color: var(--text-secondary);
+  transition: all 0.2s var(--ease-smooth);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.kb-category-pill:hover {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+  background: var(--teal-light);
+  transform: translateY(-1px);
+}
+.kb-category-pill.active {
+  background: var(--teal-dark);
+  border-color: var(--teal-dark);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(10,122,110,0.25);
+}
+
+.kb-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  transition: all 0.24s var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+}
+.kb-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+  border-color: rgba(13,148,136,0.25);
+}
+
+/* =====================================================
+   ACCURACY BENCHMARK & METRICS GAUGE
+   ===================================================== */
+.benchmark-metric-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.22s var(--ease-smooth);
+}
+.benchmark-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  border-color: rgba(13,148,136,0.2);
+}
+.metric-progress-track {
+  height: 5px;
+  background: #F1F3F5;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.metric-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 1.2s var(--ease-smooth);
+}
+
+.matrix-quadrant {
+  transition: all 0.2s var(--ease-smooth);
+  border-radius: 14px;
+}
+.matrix-quadrant:hover {
+  transform: scale(1.02);
+}
+
+/* =====================================================
+   PIPELINE ARCHITECTURE (Interactive Animated Blueprint)
+   ===================================================== */
+.pipeline-flow-wrapper {
+  position: relative;
+}
+
+.pipeline-node {
+  background: #FFFFFF;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  transition: all 0.28s var(--ease-smooth);
+  position: relative;
+  cursor: pointer;
+}
+.pipeline-node:hover {
+  transform: translateY(-4px);
+  border-color: var(--teal);
+  box-shadow: 0 12px 32px rgba(13,148,136,0.12), 0 2px 8px rgba(0,0,0,0.04);
+}
+.pipeline-node.active-stage {
+  border-color: var(--teal);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5FAF9 100%);
+  box-shadow: 0 0 0 3px rgba(13,148,136,0.18), 0 12px 30px rgba(13,148,136,0.12);
+}
+
+/* Pulsing connector between pipeline cards */
+.flow-line-pulse {
+  position: relative;
+  height: 2px;
+  background: #E2E8F0;
+  overflow: hidden;
+}
+.flow-line-pulse::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 40px;
+  background: linear-gradient(90deg, transparent, #0D9488, transparent);
+  animation: flow-line 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes flow-line {
+  0% { transform: translateX(-40px); }
+  100% { transform: translateX(250px); }
+}
+
+.stage-badge-number {
+  font-family: var(--font-mono);
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 0.2s var(--ease-spring);
+}
+.pipeline-node:hover .stage-badge-number {
+  transform: scale(1.1) rotate(-4deg);
+}
+
+.pipeline-details-panel {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  transition: all 0.3s var(--ease-smooth);
+}
+
+@media (max-width: 1023px) {
+  body.flex.overflow-hidden {
+    display: block;
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
+  }
+
+  aside.app-sidebar.flex.flex-col {
+    position: sticky;
+    top: 0;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-icon-rail {
+    display: none;
+  }
+
+  .sidebar-content {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar-content > div:first-child {
+    display: block;
+    width: 100%;
+  }
+
+  .sidebar-content > div:first-child > div:first-child {
+    height: 64px;
+    min-height: 64px;
+    padding: 0 16px;
+    justify-content: flex-start;
+  }
+
+  .sidebar-content .sidebar-panel-logo {
+    display: block;
+    width: 48px;
+    height: 48px;
+  }
+
+  .sidebar-content > div:first-child > div:nth-child(2) {
+    display: none;
+  }
+
+  aside nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 12px;
+    margin: 0;
+    scrollbar-width: none;
+  }
+
+  aside nav > div {
+    display: none;
+  }
+
+  aside nav button.w-full {
+    width: auto;
+    flex: 0 0 auto;
+    min-height: 40px;
+    margin-top: 0 !important;
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+
+  aside nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar-content > div:last-child {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 16px 8px;
+    border-top: 0;
+    background: transparent;
+  }
+
+  #sidebar-user-card {
+    display: none;
+  }
+
+  .sidebar-content > div:last-child > div:last-child {
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden > header.h-16 {
+    height: auto;
+    min-height: 64px;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden > header.h-16 > div:last-child > div:first-child {
+    display: none;
+  }
+
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden > main.flex-1.overflow-y-auto.p-8 {
+    overflow: visible;
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden > header.h-16 > div:first-child {
+    display: none;
+  }
+
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden > header.h-16 > div:last-child {
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  .sidebar-content > div:last-child > div:last-child > span {
+    display: none;
+  }
+
+  body > div.flex-1.flex.flex-col.h-full.overflow-hidden > header.h-16 {
+    min-height: 52px;
+    padding: 8px 16px;
+    justify-content: flex-end;
+  }
+
+  #tab-landing .mockup-window {
+    padding: 12px;
+  }
+
+  #tab-landing .mockup-window > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #tab-landing .mockup-window > div:first-child > div:first-child {
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  #tab-landing .mockup-window > div:first-child > div:first-child > span {
+    overflow-wrap: anywhere;
+  }
+
+  #api-key-modal,
+  #auth-modal,
+  #history-modal {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  #api-key-modal > div,
+  #auth-modal > div,
+  #history-modal > div {
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    margin-block: auto;
+  }
+}
+

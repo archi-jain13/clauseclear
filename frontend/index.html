@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClauseClear — Understand Any Contract in Plain English</title>
+  <meta name="description" content="Stop signing contracts you don't understand. ClauseClear translates confusing legal clauses into plain English and flags hidden risks before you sign.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/styles.css?v=14.0">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal: {
+              50: '#EDFAF8',
+              100: '#CCFBF1',
+              200: '#A7F0E8',
+              500: '#14B8A6',
+              600: '#0D9488',
+              700: '#0A7A6E',
+              800: '#085E56',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Lora', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full bg-[#F7F5F0] text-[#2C2A26] flex overflow-hidden antialiased selection:bg-teal-100 selection:text-teal-800">
+
+  <!-- ================= LEFT SIDEBAR NAVIGATION ================= -->
+  <aside class="app-sidebar w-72 bg-[#F4F4F0] border-r border-[#E5E7EB] flex flex-col justify-between shrink-0 select-none z-30">
+    <div class="sidebar-icon-rail">
+      <button class="sidebar-logo" onclick="switchTab('landing')" aria-label="ClauseClear home" title="ClauseClear">
+        <img src="/static/logo.png" alt="ClauseClear logo">
+      </button>
+
+      <nav class="sidebar-rail-nav" aria-label="Quick navigation">
+        <button class="sidebar-rail-link is-active" data-tab="landing" onclick="switchTab('landing')" aria-label="Overview" aria-current="page" title="Overview">
+          <i data-lucide="home"></i>
+        </button>
+        <button class="sidebar-rail-link" data-tab="analyzer" onclick="switchTab('analyzer')" aria-label="Document Analyzer" title="Document Analyzer">
+          <i data-lucide="file-search"></i>
+        </button>
+        <button class="sidebar-rail-link" data-tab="knowledge_base" onclick="switchTab('knowledge_base')" aria-label="Fair Terms Guide" title="Fair Terms Guide">
+          <i data-lucide="book-open-check"></i>
+        </button>
+        <button class="sidebar-rail-link" onclick="openHistoryModal()" aria-label="Contract History" title="Contract History">
+          <i data-lucide="history"></i>
+        </button>
+        <button class="sidebar-rail-link" data-tab="eval" onclick="switchTab('eval')" aria-label="Accuracy Benchmark" title="Accuracy Benchmark">
+          <i data-lucide="check-check"></i>
+        </button>
+        <button class="sidebar-rail-link" data-tab="architecture" onclick="switchTab('architecture')" aria-label="Pipeline Architecture" title="Pipeline Architecture">
+          <i data-lucide="cpu"></i>
+        </button>
+      </nav>
+
+      <div class="sidebar-rail-bottom">
+        <button class="sidebar-rail-link" onclick="toggleApiKeyModal()" aria-label="API Settings" title="API Settings">
+          <i data-lucide="settings"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-content flex flex-col justify-between min-w-0">
+    
+    <div class="flex flex-col">
+      <!-- Brand Header -->
+      <div class="h-20 px-6 border-b border-[#E5E7EB] flex items-center justify-between">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('landing')">
+          <img src="/static/logo.png" alt="ClauseClear logo" class="sidebar-panel-logo h-10 w-10 rounded-xl object-cover shadow-md">
+          <div>
+            <span class="text-lg font-extrabold tracking-tight text-[#1F2937] block leading-tight">ClauseClear</span>
+            <span class="text-[11px] font-medium text-teal-700 block">Plain English Legal Reader</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Session Badge -->
+      <div class="px-5 pt-4 pb-2">
+        <div class="px-3.5 py-2.5 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-between text-xs shadow-sm">
+          <div class="flex items-center space-x-2 truncate">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block animate-pulse"></span>
+            <span class="text-[#374151] font-semibold truncate" id="sidebar-session-status">Ready to Analyze</span>
+          </div>
+          <span class="text-[10px] font-medium text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100">Analysis service</span>
+        </div>
+      </div>
+
+      <!-- Main Navigation Menu -->
+      <nav class="px-4 py-2 space-y-1">
+        <div class="px-3 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">Consumer Tools</div>
+
+        <!-- 1. Landing Page -->
+        <button onclick="switchTab('landing')" id="nav-btn-landing" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#4B5563] hover:text-[#1F2937] hover:bg-white/80 transition-all nav-link-active">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="home" class="w-4 h-4 text-teal-600"></i>
+            <span>Overview & Features</span>
+          </div>
+        </button>
+
+        <!-- 2. Contract Analyzer -->
+        <button onclick="switchTab('analyzer')" id="nav-btn-analyzer" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#4B5563] hover:text-[#1F2937] hover:bg-white/80 transition-all">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="file-search" class="w-4 h-4 text-[#6B7280]"></i>
+            <span>Document Analyzer</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 font-semibold border border-teal-100">Core</span>
+        </button>
+
+        <!-- 3. Fair Standard Baselines -->
+        <button onclick="switchTab('knowledge_base')" id="nav-btn-knowledge_base" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#4B5563] hover:text-[#1F2937] hover:bg-white/80 transition-all">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="book-open-check" class="w-4 h-4 text-[#6B7280]"></i>
+            <span>Fair Terms Guide</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-[#4B5563] font-medium" id="sidebar-kb-count">60+</span>
+        </button>
+
+        <!-- 4. Contract History -->
+        <button onclick="openHistoryModal()" id="nav-btn-history" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#4B5563] hover:text-[#1F2937] hover:bg-white/80 transition-all">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="history" class="w-4 h-4 text-[#6B7280]"></i>
+            <span>My Contract History</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 font-semibold border border-teal-100 hidden" id="sidebar-history-count">0</span>
+        </button>
+
+        <!-- Developer & Admin Section -->
+        <div class="pt-5 pb-1 px-3">
+          <div class="h-px bg-[#E5E7EB] w-full mb-3"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF]">Developer / Admin</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.2 bg-gray-200 text-gray-600 rounded">Internal</span>
+          </div>
+        </div>
+
+        <button onclick="switchTab('eval')" id="nav-btn-eval" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#6B7280] hover:text-[#1F2937] hover:bg-white/80 transition-all">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="check-check" class="w-4 h-4 text-[#9CA3AF]"></i>
+            <span>Accuracy Benchmark</span>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">20-case</span>
+        </button>
+
+        <button onclick="switchTab('architecture')" id="nav-btn-architecture" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#6B7280] hover:text-[#1F2937] hover:bg-white/80 transition-all">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="cpu" class="w-4 h-4 text-[#9CA3AF]"></i>
+            <span>Pipeline Architecture</span>
+          </div>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Section: User Account & Settings -->
+    <div class="p-5 border-t border-[#E5E7EB] space-y-3 bg-[#F4F4F0]">
+      <!-- Account Card -->
+      <div id="sidebar-user-card" class="p-3 rounded-xl bg-white border border-[#E5E7EB] text-xs shadow-sm space-y-2">
+        <!-- Guest State -->
+        <div id="sidebar-guest-view" class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-[#374151] flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span>Guest Session</span>
+            </span>
+            <span class="text-[10px] text-[#9CA3AF]">Not saved</span>
+          </div>
+          <p class="text-[11px] text-[#6B7280] leading-snug">Sign in to save and organize all your contract analyses.</p>
+          <button onclick="openAuthModal('login')" class="w-full py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 font-semibold text-xs border border-teal-200 transition-colors flex items-center justify-center space-x-1.5">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Sign In / Register</span>
+          </button>
+        </div>
+
+        <!-- Authenticated State -->
+        <div id="sidebar-auth-view" class="hidden space-y-2.5">
+          <div class="flex items-center space-x-2.5">
+            <div id="sidebar-user-avatar" class="w-7 h-7 rounded-full bg-gradient-to-tr from-teal-700 to-teal-500 text-white flex items-center justify-center text-xs font-bold uppercase shadow-sm">DU</div>
+            <div class="truncate flex-1">
+              <div id="sidebar-user-name" class="font-bold text-xs text-[#1F2937] truncate">Demo User</div>
+              <div id="sidebar-user-email" class="text-[10px] text-[#6B7280] truncate">demo@clauseclear.com</div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-1 border-t border-gray-100 text-[11px]">
+            <button onclick="openHistoryModal()" class="text-teal-700 hover:text-teal-800 font-semibold flex items-center space-x-1">
+              <i data-lucide="history" class="w-3 h-3"></i>
+              <span>Saved (<span id="sidebar-history-subcount">0</span>)</span>
+            </button>
+            <button onclick="handleLogout()" class="text-red-600 hover:text-red-700 font-semibold flex items-center space-x-1">
+              <i data-lucide="log-out" class="w-3 h-3"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engine & Key Status -->
+      <div class="flex items-center justify-between px-1 text-xs">
+        <span class="text-[11px] text-[#6B7280] flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Google Gemini AI</span>
+        </span>
+        <button onclick="toggleApiKeyModal()" class="text-[11px] text-teal-700 hover:text-teal-800 font-semibold underline">API Settings</button>
+      </div>
+    </div>
+
+    </div>
+  </aside>
+
+  <!-- ================= MAIN VIEWPORT CONTAINER ================= -->
+  <div class="flex-1 flex flex-col h-full overflow-hidden bg-[#FAFAF8]">
+    
+    <!-- Top Header Navigation Bar -->
+    <header class="h-16 px-8 border-b border-[#E5E7EB] bg-white/90 backdrop-blur-md flex items-center justify-between shrink-0 z-20">
+      
+      <!-- Breadcrumbs -->
+      <div class="flex items-center space-x-2 text-xs text-[#6B7280]">
+        <span class="font-semibold text-[#374151]">ClauseClear</span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#9CA3AF]"></i>
+        <span id="breadcrumb-current" class="text-teal-800 font-semibold">Home & Overview</span>
+        <span id="breadcrumb-file" class="hidden text-teal-700 font-mono bg-teal-50 px-2 py-0.5 rounded border border-teal-200"></span>
+      </div>
+
+      <!-- Header Right: Sample Presets & User Auth Controls -->
+      <div class="flex items-center space-x-3">
+        <!-- Quick Helpful Presets -->
+        <div class="hidden md:flex items-center space-x-1.5 border-r border-[#E5E7EB] pr-3">
+          <span class="hidden xl:inline-block text-[11px] font-semibold text-[#6B7280] mr-1">Presets:</span>
+          <button onclick="loadSample('predatory_lease')" class="btn-pill-example px-2.5 py-1.5 flex items-center space-x-1.5 hover:border-red-200 hover:bg-red-50 hover:text-red-700 text-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#EF4444]"></span>
+            <span>Trap Lease</span>
+          </button>
+          <button onclick="loadSample('standard_lease')" class="btn-pill-example px-2.5 py-1.5 flex items-center space-x-1.5 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 text-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+            <span>Fair Lease</span>
+          </button>
+          <button onclick="loadSample('predatory_loan')" class="btn-pill-example px-2.5 py-1.5 flex items-center space-x-1.5 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700 text-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+            <span>Loan Note</span>
+          </button>
+        </div>
+
+        <!-- Guest Controls (when signed out) -->
+        <div id="header-guest-controls" class="flex items-center space-x-2">
+          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs flex items-center space-x-1.5 shadow-sm shadow-teal-700/15 transition-all hover:scale-[1.02]">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Sign In</span>
+          </button>
+          <button onclick="openAuthModal('register')" class="hidden sm:inline-flex px-3 py-1.5 rounded-xl bg-white border border-[#D1D5DB] hover:border-teal-500 hover:text-teal-700 text-[#374151] font-semibold text-xs items-center space-x-1 transition-all">
+            <span>Register</span>
+          </button>
+        </div>
+
+        <!-- Authenticated Controls (when signed in) -->
+        <div id="header-auth-controls" class="hidden relative">
+          <button onclick="toggleUserDropdown()" id="user-menu-btn" class="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] hover:border-teal-400 hover:shadow-sm transition-all text-xs font-semibold select-none">
+            <div id="header-user-avatar" class="w-6 h-6 rounded-full bg-gradient-to-tr from-teal-700 to-teal-500 text-white flex items-center justify-center text-[10px] font-bold uppercase shadow-sm">DU</div>
+            <span id="header-user-name" class="text-[#1F2937] font-semibold max-w-[120px] truncate">Demo User</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#9CA3AF]"></i>
+          </button>
+
+          <!-- User Dropdown Popover Menu -->
+          <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-2xl bg-white border border-[#E5E7EB] dropdown-card py-2 z-50">
+            <div class="px-4 py-2 border-b border-gray-100">
+              <p id="dropdown-user-name" class="text-xs font-bold text-[#1F2937] truncate">Demo User</p>
+              <p id="dropdown-user-email" class="text-[11px] text-[#6B7280] truncate">demo@clauseclear.com</p>
+              <div class="mt-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-700 border border-teal-100">
+                <i data-lucide="award" class="w-3 h-3 mr-1 text-teal-600"></i>
+                <span id="dropdown-user-role">Member</span>
+              </div>
+            </div>
+            <div class="py-1">
+              <button onclick="openHistoryModal(); toggleUserDropdown(false);" class="w-full px-4 py-2 text-left text-xs font-semibold text-[#374151] hover:bg-teal-50/70 hover:text-teal-800 flex items-center justify-between">
+                <span class="flex items-center space-x-2">
+                  <i data-lucide="history" class="w-3.5 h-3.5 text-[#6B7280]"></i>
+                  <span>My Contract History</span>
+                </span>
+                <span id="dropdown-history-count" class="text-[10px] px-1.5 py-0.2 bg-teal-100 text-teal-800 rounded-full font-bold">0</span>
+              </button>
+              <button onclick="toggleApiKeyModal(); toggleUserDropdown(false);" class="w-full px-4 py-2 text-left text-xs font-semibold text-[#374151] hover:bg-teal-50/70 hover:text-teal-800 flex items-center space-x-2">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-[#6B7280]"></i>
+                <span>API Key Settings</span>
+              </button>
+            </div>
+            <div class="pt-1 border-t border-gray-100">
+              <button onclick="handleLogout()" class="w-full px-4 py-2 text-left text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center space-x-2">
+                <i data-lucide="log-out" class="w-3.5 h-3.5 text-red-500"></i>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- Scrollable Viewport Content -->
+    <main class="flex-1 overflow-y-auto p-8 space-y-8">
+
+      <!-- ================= TAB 0: LANDING PAGE ================= -->
+      <div id="tab-landing" class="tab-content space-y-16 max-w-6xl mx-auto pb-16 paper-bg">
+               <!-- Hero Section -->
+        <div class="pt-8 text-center space-y-7">
+
+          <!-- Eyebrow badge -->
+          <div class="hero-badge" style="animation-delay:0.05s">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 float-icon"></i>
+            <span>No legal degree required. Seriously.</span>
+          </div>
+
+          <!-- Main headline — serif, warm, human -->
+          <h1 class="font-display text-4xl sm:text-5xl lg:text-[3.4rem] font-bold text-[#1A1814] leading-[1.18] max-w-4xl mx-auto tracking-tight"
+              style="animation: fade-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both">
+            Read your contract like you&rsquo;d read a
+            <span class="squiggle">text message</span>
+            &mdash; not a legal brief.
+          </h1>
+
+          <!-- Subtext — conversational, real -->
+          <p class="text-base sm:text-lg text-[#5A5751] max-w-2xl mx-auto leading-relaxed font-normal"
+             style="animation: fade-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both">
+            That sinking feeling when you skim a 24-page lease and have no idea what you just agreed to? We built ClauseClear to fix that.
+            Drop in your document, and we&rsquo;ll flag the sketchy bits and translate the rest into plain English.
+          </p>
+
+          <!-- CTA row -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1"
+               style="animation: fade-up 0.55s cubic-bezier(0.16,1,0.3,1) 0.3s both">
+            <button onclick="switchTab('analyzer')" id="hero-cta-primary"
+                    class="btn-primary px-8 py-3.5 rounded-xl text-sm font-semibold flex items-center space-x-2.5">
+              <i data-lucide="file-up" class="w-4 h-4"></i>
+              <span>Check My Document &mdash; It&rsquo;s Free</span>
+            </button>
+            <button onclick="loadSample('predatory_lease')"
+                    class="btn-secondary px-6 py-3.5 rounded-xl text-sm flex items-center space-x-2">
+              <i data-lucide="play" class="w-4 h-4 text-teal-600"></i>
+              <span>See a live example</span>
+            </button>
+          </div>
+
+          <!-- Product preview window -->
+          <div class="pt-4 max-w-4xl mx-auto">
+            <div class="mockup-window p-5 rounded-2xl text-left space-y-4" style="animation: scale-in 0.65s cubic-bezier(0.16,1,0.3,1) 0.4s both">
+              <!-- Fake title bar -->
+              <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+                <div class="flex items-center space-x-2">
+                  <div class="mockup-dot bg-red-400"></div>
+                  <div class="mockup-dot bg-amber-400"></div>
+                  <div class="mockup-dot bg-emerald-400"></div>
+                  <span class="text-xs font-medium text-[#8A8782] ml-2 font-mono">residential_lease_2024.pdf</span>
+                </div>
+                <span class="text-[11px] font-semibold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-100 flex items-center space-x-1">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-teal-600"></i>
+                  <span>Analyzed &mdash; 8.4 seconds</span>
+                </span>
+              </div>
+
+              <!-- Three clause cards -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+
+                <div class="p-4 rounded-xl bg-[#FFF1F2] border border-[#FECACA] space-y-2 mockup-risk-card">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-[#DC2626] uppercase text-[10px] tracking-widest">🚩 High Risk</span>
+                    <span class="px-2 py-0.5 rounded-full bg-white text-[#DC2626] font-bold text-[10px] border border-red-100">88 / 100</span>
+                  </div>
+                  <h4 class="font-semibold text-[#991B1B] font-display text-sm">Non-Refundable Deposit</h4>
+                  <p class="text-[#7F1D1D] leading-snug text-[11px]">Landlord keeps your full $3,500 deposit if you leave early — even if they find a new tenant the next day. That&rsquo;s not standard.</p>
+                  <div class="flex items-center space-x-1 text-[10px] font-semibold text-[#B91C1C] pt-1 border-t border-red-100">
+                    <i data-lucide="help-circle" class="w-3 h-3"></i>
+                    <span>Question ready to send your landlord</span>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-[#B45309] uppercase text-[10px] tracking-widest">⚠ Unusual</span>
+                    <span class="px-2 py-0.5 rounded-full bg-white text-[#D97706] font-bold text-[10px] border border-yellow-100">65 / 100</span>
+                  </div>
+                  <h4 class="font-semibold text-[#92400E] font-display text-sm">24/7 Entry Without Notice</h4>
+                  <p class="text-[#78350F] leading-snug text-[11px]">Gives the landlord the right to walk into your home at any hour with no warning. Most states require 24–48 hours notice.</p>
+                  <div class="flex items-center space-x-1 text-[10px] font-semibold text-[#B45309] pt-1 border-t border-yellow-100">
+                    <i data-lucide="pencil" class="w-3 h-3"></i>
+                    <span>Counter-proposal drafted for you</span>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-[#15803D] uppercase text-[10px] tracking-widest">✓ Fair &amp; Normal</span>
+                    <span class="px-2 py-0.5 rounded-full bg-white text-[#16803C] font-bold text-[10px] border border-green-100">12 / 100</span>
+                  </div>
+                  <h4 class="font-semibold text-[#14532D] font-display text-sm">Maintenance &amp; Repairs</h4>
+                  <p class="text-[#166534] leading-snug text-[11px]">Landlord handles structural repairs, plumbing, and the roof. You&rsquo;re responsible for light bulbs. Completely standard split.</p>
+                  <div class="flex items-center space-x-1 text-[10px] font-semibold text-[#047857] pt-1 border-t border-green-100">
+                    <i data-lucide="shield-check" class="w-3 h-3"></i>
+                    <span>Matches local tenant protection laws</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust Signal Strip -->
+        <div class="trust-strip py-7 grid grid-cols-2 md:grid-cols-4 gap-0 divide-x divide-[#E5E2DC]">
+          <div class="trust-stat flex flex-col items-center text-center px-6 space-y-1.5 reveal">
+            <i data-lucide="lock" class="w-6 h-6 text-teal-700 mb-1" aria-hidden="true"></i>
+            <span class="text-sm font-semibold text-[#1A1814]">Data Processing</span>
+            <span class="text-xs text-[#8A8782] leading-snug">Cloud analysis sends submitted text to the configured provider.</span>
+          </div>
+          <div class="trust-stat flex flex-col items-center text-center px-6 space-y-1.5 reveal reveal-delay-1">
+            <i data-lucide="brain" class="w-6 h-6 text-teal-700 mb-1" aria-hidden="true"></i>
+            <span class="text-sm font-semibold text-[#1A1814]">Provider Terms Apply</span>
+            <span class="text-xs text-[#8A8782] leading-snug">Review the selected provider&rsquo;s data-use and retention terms.</span>
+          </div>
+          <div class="trust-stat flex flex-col items-center text-center px-6 space-y-1.5 reveal reveal-delay-2">
+            <i data-lucide="timer" class="w-6 h-6 text-teal-700 mb-1" aria-hidden="true"></i>
+            <span class="text-sm font-semibold text-[#1A1814]">Under 10 Seconds</span>
+            <span class="text-xs text-[#8A8782] leading-snug">Clause-by-clause breakdown instantly</span>
+          </div>
+          <div class="trust-stat flex flex-col items-center text-center px-6 space-y-1.5 reveal reveal-delay-3">
+            <i data-lucide="scale" class="w-6 h-6 text-teal-700 mb-1" aria-hidden="true"></i>
+            <span class="text-sm font-semibold text-[#1A1814]">60+ Baselines</span>
+            <span class="text-xs text-[#8A8782] leading-snug">Benchmarked against real consumer laws</span>
+          </div>
+        </div>
+
+        <!-- How It Works (4 Steps) -->
+        <div class="space-y-10">
+          <div class="text-center space-y-3 reveal">
+            <span class="text-xs font-semibold text-teal-700 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-100">How it works</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#1A1814] tracking-tight">Four steps. No law degree needed.</h2>
+            <p class="text-sm text-[#5A5751] max-w-lg mx-auto">We do the heavy reading and hand you the highlights. Like having a lawyer friend explain things over coffee.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+            <div class="step-card reveal reveal-delay-1">
+              <div class="step-number mb-3">01</div>
+              <h3 class="font-semibold text-[#1A1814] text-base mb-1.5">Drop your agreement in</h3>
+              <p class="text-xs text-[#5A5751] leading-relaxed">PDF, text file, or just paste the clauses directly. We take it from there.</p>
+            </div>
+            <div class="step-card reveal reveal-delay-2">
+              <div class="step-number mb-3">02</div>
+              <h3 class="font-semibold text-[#1A1814] text-base mb-1.5">We slice it into pieces</h3>
+              <p class="text-xs text-[#5A5751] leading-relaxed">Every clause — deposit terms, entry rights, late fees — extracted so nothing hides in the fine print.</p>
+            </div>
+            <div class="step-card reveal reveal-delay-3">
+              <div class="step-number mb-3">03</div>
+              <h3 class="font-semibold text-[#1A1814] text-base mb-1.5">Plain English, clause by clause</h3>
+              <p class="text-xs text-[#5A5751] leading-relaxed">We rewrite each section in language your mum would understand. Color-coded by risk level.</p>
+            </div>
+            <div class="step-card reveal reveal-delay-4">
+              <div class="step-number mb-3">04</div>
+              <h3 class="font-semibold text-[#1A1814] text-base mb-1.5">Ask the right questions</h3>
+              <p class="text-xs text-[#5A5751] leading-relaxed">Get polite, professional negotiation questions drafted and ready to copy-paste to your landlord or lender.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Grid -->
+        <div class="space-y-10">
+          <div class="text-center space-y-3 reveal">
+            <span class="text-xs font-semibold text-teal-700 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-100">What you get</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#1A1814] tracking-tight">Everything you need before you sign</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <div class="feature-card reveal reveal-delay-1">
+              <div class="feature-icon bg-teal-50 text-teal-700 mb-3">
+                <i data-lucide="file-check" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display text-lg font-semibold text-[#1A1814] mb-2">A plain-English summary of the whole thing</h3>
+              <p class="text-sm text-[#5A5751] leading-relaxed">A warm, 3-paragraph plain-English summary that tells you the most important stuff — rent, notice periods, and whether your deposit is actually protected.</p>
+            </div>
+
+            <div class="feature-card reveal reveal-delay-2">
+              <div class="feature-icon bg-red-50 text-red-600 mb-3">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display text-lg font-semibold text-[#1A1814] mb-2">Gentle alerts on the risky bits</h3>
+              <p class="text-sm text-[#5A5751] leading-relaxed">Daily late fees of $75? Automatic rent escalations? Landlord entry with zero notice? We catch them and explain why they&rsquo;re unusual — without being alarmist.</p>
+            </div>
+
+            <div class="feature-card reveal reveal-delay-3">
+              <div class="feature-icon bg-blue-50 text-blue-600 mb-3">
+                <i data-lucide="scale" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display text-lg font-semibold text-[#1A1814] mb-2">Compared against what&rsquo;s actually normal</h3>
+              <p class="text-sm text-[#5A5751] leading-relaxed">We don&rsquo;t just flag things — we tell you whether they&rsquo;re unusual against 60+ real market standards. 90 days notice vs. the standard 30? You&rsquo;ll know.</p>
+            </div>
+
+            <div class="feature-card reveal reveal-delay-4">
+              <div class="feature-icon bg-amber-50 text-amber-600 mb-3">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display text-lg font-semibold text-[#1A1814] mb-2">Ready-to-send negotiation questions</h3>
+              <p class="text-sm text-[#5A5751] leading-relaxed">Asking for changes feels awkward. We draft polite, professional questions you can email without sounding confrontational — or clueless.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Story callout -->
+        <div class="story-card reveal">
+          <div class="max-w-2xl mx-auto text-center space-y-5">
+            <span class="text-xs font-semibold text-teal-700 uppercase tracking-widest">A quick story</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#1A1814] tracking-tight">What if signing felt like a relief instead of a gamble?</h2>
+            <p class="text-sm sm:text-base text-[#5A5751] leading-relaxed italic">
+              &ldquo;You find the perfect apartment. You&rsquo;re handed 24 pages of legalese — <em>indemnification</em>, <em>severability</em>, <em>liquidated damages</em>. Instead of skimming and hoping for the best, you drop it into ClauseClear. 10 seconds later, you know your deposit is safe, you catch a $75/day late fee that was buried on page 18, and you send a polite email to fix it before you sign.&rdquo;
+            </p>
+            <button onclick="switchTab('analyzer')" class="btn-primary px-8 py-3 rounded-xl text-sm font-semibold inline-flex items-center space-x-2">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Try it now &mdash; it&rsquo;s free</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 1: CONTRACT ANALYZER ================= -->
+      <div id="tab-analyzer" class="tab-content hidden space-y-8 max-w-6xl mx-auto">
+        
+        <!-- Header & Editorial Instructions -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2 border-b border-[#EAE7E0]">
+          <div>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-100 text-teal-800 text-xs font-semibold mb-2">
+              <i data-lucide="scale" class="w-3.5 h-3.5 text-teal-600"></i>
+              <span>Contract Examination Folio</span>
+            </div>
+            <h1 class="font-display text-3xl sm:text-4xl font-bold text-[#1A1814] tracking-tight">Contract Analyzer</h1>
+            <p class="text-sm text-[#5A5751] mt-1.5 max-w-2xl leading-relaxed">
+              Drop any tenancy lease, loan agreement, or service contract to instantly uncover hidden predatory traps, calculate standard fairness baselines, and receive ready-to-use negotiation scripts.
+            </p>
+          </div>
+          
+          <!-- Curated Sample Contracts Selector -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+            <span class="text-xs font-semibold text-[#8A8782] sm:mr-1">Sample Contracts:</span>
+            <button onclick="loadSample('predatory_lease')" class="sample-preset-card flex items-center space-x-2.5 text-left group">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0 group-hover:scale-125 transition-transform"></span>
+              <div>
+                <span class="text-xs font-bold text-[#1A1814] block leading-tight">Predatory Residential Lease</span>
+                <span class="text-[10px] text-red-600 font-medium">7 dangerous traps embedded</span>
+              </div>
+            </button>
+            <button onclick="loadSample('standard_lease')" class="sample-preset-card flex items-center space-x-2.5 text-left group">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 group-hover:scale-125 transition-transform"></span>
+              <div>
+                <span class="text-xs font-bold text-[#1A1814] block leading-tight">Fair Standard Agreement</span>
+                <span class="text-[10px] text-emerald-700 font-medium">Customary statutory terms</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ingestion Box: Paper Document Dropzone -->
+        <div class="surface-card p-6 sm:p-8 rounded-3xl border border-[#E8E5DF] bg-white shadow-sm space-y-6">
+          
+          <!-- Dropzone -->
+          <div id="drop-zone" class="upload-dropzone p-8 sm:p-10 flex flex-col items-center justify-center text-center cursor-pointer min-h-[220px] relative overflow-hidden group">
+            <input type="file" id="file-input" class="hidden" accept=".pdf,.txt,.md,.png,.jpg,.jpeg">
+            
+            <div class="h-16 w-16 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mb-3.5 border border-teal-100 shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-transform">
+              <i data-lucide="file-up" class="h-8 w-8 text-teal-600"></i>
+            </div>
+            
+            <h3 class="text-base sm:text-lg font-bold text-[#1A1814]">
+              Drag and drop your agreement here, or <span class="text-teal-700 font-bold underline decoration-teal-300 hover:text-teal-800">browse files</span>
+            </h3>
+            <p class="text-xs text-[#5A5751] mt-1.5 max-w-md">
+              Supports standard PDF documents, scanned images, plain text, and Word-exported agreements.
+            </p>
+            
+            <div class="flex flex-wrap items-center justify-center gap-2 mt-4 text-[11px] text-[#5A5751]">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#F5F3EF] border border-[#E5E2DA] font-mono">PDF</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-[#F5F3EF] border border-[#E5E2DA] font-mono">TXT</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-[#F5F3EF] border border-[#E5E2DA] font-mono">MD</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-[#F5F3EF] border border-[#E5E2DA] font-mono">JPG / PNG</span>
+              <span class="inline-flex items-center space-x-1 text-teal-800 bg-teal-50/90 px-3 py-0.5 rounded-full border border-teal-100 font-medium">
+                <i data-lucide="lock" class="w-3 h-3 text-teal-600"></i>
+                <span>Provider policies apply</span>
+              </span>
+            </div>
+
+            <!-- Login Required Badge (visible when guest) -->
+            <div id="dropzone-auth-hint" class="inline-flex items-center space-x-2 mt-3 px-4 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 shadow-xs hover:bg-amber-100 transition-colors">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>Sign in required to analyze contracts &mdash; Click to sign in</span>
+            </div>
+
+            <div id="file-selected-name" class="hidden mt-3 px-4 py-2 bg-teal-50 border border-teal-200 rounded-xl text-xs font-semibold text-teal-800 font-mono shadow-xs"></div>
+          </div>
+
+          <!-- Direct Text Input Accordion / Drawer -->
+          <div class="space-y-2 pt-1 border-t border-[#F2EFE9]">
+            <div class="flex items-center justify-between pt-2">
+              <label for="contract-text-input" class="text-xs font-bold uppercase tracking-wider text-[#5A5751] flex items-center space-x-1.5">
+                <i data-lucide="text-quote" class="w-3.5 h-3.5 text-teal-600"></i>
+                <span>Or paste contract clauses directly:</span>
+              </label>
+              <button onclick="clearContractInput()" class="text-xs text-[#8A8782] hover:text-[#1A1814] font-medium transition-colors">
+                Clear Text
+              </button>
+            </div>
+            <textarea id="contract-text-input" rows="4" placeholder="Paste lease clauses, loan agreement terms, or contract paragraphs here..." class="w-full bg-[#FBF9F5] border border-[#DDD9D1] rounded-2xl p-4 text-xs sm:text-sm text-[#1A1814] focus:outline-none focus:border-teal-600 focus:bg-white transition-all resize-y leading-relaxed font-sans"></textarea>
+          </div>
+
+          <!-- Hidden Selector for Engine -->
+          <input type="hidden" id="engine-selector" value="auto">
+
+          <!-- Submit CTA Row -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1 border-t border-[#F2EFE9]">
+            <div class="flex items-center space-x-2 text-xs text-[#8A8782]">
+              <i data-lucide="cpu" class="w-3.5 h-3.5 text-teal-600"></i>
+              <span>Cloud AI may receive contract text for analysis.</span>
+            </div>
+            <button id="btn-analyze" onclick="startAnalysis()" class="btn-primary w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-bold flex items-center justify-center space-x-2.5 shadow-md shadow-teal-700/25">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Begin Contract Examination</span>
+            </button>
+          </div>
+          <p id="analysis-privacy-notice" class="text-[11px] text-[#6B7280] leading-relaxed">
+            Completed analyses are saved to your account history. When cloud AI is used, contract text is sent to that provider; review its data-use and retention terms before submitting sensitive documents.
+          </p>
+
+        </div>
+
+        <!-- Multi-Step Animated Scanner Loading State -->
+        <div id="analysis-loading" class="hidden surface-card p-10 sm:p-12 rounded-3xl text-center space-y-6 bg-white border border-[#E8E5DF] shadow-md scan-beam-container">
+          <div class="scan-beam-line"></div>
+          
+          <div class="inline-flex items-center justify-center p-4 bg-teal-50 rounded-2xl text-teal-700 border border-teal-100 shadow-sm">
+            <i data-lucide="file-search" class="w-8 h-8 text-teal-600 float-icon"></i>
+          </div>
+          
+          <div class="space-y-1">
+            <h3 class="font-display text-2xl font-bold text-[#1A1814]">Examining Agreement Syntax & Structure...</h3>
+            <p class="text-xs sm:text-sm text-[#5A5751] max-w-lg mx-auto">
+              Scanning legal clauses against customary market benchmarks to isolate predatory language.
+            </p>
+          </div>
+
+          <!-- 4-Phase Stepper Indicator -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 max-w-3xl mx-auto pt-2 text-left">
+            <div id="scan-step-1" class="scanner-step-pill active p-3 rounded-xl border border-teal-200 text-xs flex items-center space-x-2.5">
+              <span class="w-5 h-5 rounded-full bg-teal-600 text-white font-mono text-[10px] font-bold flex items-center justify-center shrink-0">1</span>
+              <span class="font-semibold text-xs leading-snug">Structural Chunking</span>
+            </div>
+            <div id="scan-step-2" class="scanner-step-pill p-3 rounded-xl border border-gray-200 text-xs flex items-center space-x-2.5 text-[#8A8782]">
+              <span class="w-5 h-5 rounded-full bg-gray-200 text-[#5A5751] font-mono text-[10px] font-bold flex items-center justify-center shrink-0">2</span>
+              <span class="font-semibold text-xs leading-snug">Vector RAG Baseline</span>
+            </div>
+            <div id="scan-step-3" class="scanner-step-pill p-3 rounded-xl border border-gray-200 text-xs flex items-center space-x-2.5 text-[#8A8782]">
+              <span class="w-5 h-5 rounded-full bg-gray-200 text-[#5A5751] font-mono text-[10px] font-bold flex items-center justify-center shrink-0">3</span>
+              <span class="font-semibold text-xs leading-snug">Stage 2 Anti-Hallucination</span>
+            </div>
+            <div id="scan-step-4" class="scanner-step-pill p-3 rounded-xl border border-gray-200 text-xs flex items-center space-x-2.5 text-[#8A8782]">
+              <span class="w-5 h-5 rounded-full bg-gray-200 text-[#5A5751] font-mono text-[10px] font-bold flex items-center justify-center shrink-0">4</span>
+              <span class="font-semibold text-xs leading-snug">Plain-English Synthesis</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Dashboard -->
+        <div id="results-dashboard" class="hidden space-y-6">
+          
+          <!-- Save / History Status Notification Banner -->
+          <div id="analysis-save-status-banner" class="rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-[#E5E2DA] bg-[#FDFCF9] shadow-2xs transition-all">
+            <div class="flex items-center space-x-3">
+              <div id="save-status-icon-box" class="h-9 w-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100">
+                <i data-lucide="bookmark-check" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p id="save-status-text" class="text-xs font-bold text-[#1A1814]">Analysis saved to your encrypted local contract archive.</p>
+                <p id="save-status-subtext" class="text-[11px] text-[#5A5751]">Revisit or re-examine this document whenever you need.</p>
+              </div>
+            </div>
+            <div id="save-status-action" class="shrink-0 flex items-center space-x-2 pl-12 sm:pl-0">
+              <button onclick="openHistoryModal()" class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-teal-50 text-teal-800 text-xs font-bold border border-[#DDD9D1] transition-colors flex items-center space-x-1.5 shadow-2xs">
+                <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                <span>Open Archive</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Summary Banner Card with Circular Health Meter -->
+          <div id="summary-banner" class="surface-card p-6 sm:p-8 rounded-3xl border border-[#E8E5DF] bg-white space-y-6 shadow-sm">
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-[#F2EFE9] pb-6">
+              <div class="space-y-2 flex-1">
+                <div class="flex items-center space-x-3">
+                  <h3 id="doc-title-display" class="font-display text-2xl sm:text-3xl font-bold text-[#1A1814] tracking-tight">Contract Examination Findings</h3>
+                  <span id="risk-badge-overall" class="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-2xs"></span>
+                </div>
+                <p id="doc-verdict-display" class="text-sm text-[#5A5751] max-w-3xl leading-relaxed font-normal"></p>
+              </div>
+
+              <!-- Risk Score Dial & Stamped Letter Grade -->
+              <div class="flex items-center space-x-6 bg-[#FBF9F5] px-6 py-4 rounded-2xl border border-[#EAE7E0] shrink-0">
+                <div class="text-right">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-[#8A8782] block">Overall Risk Index</span>
+                  <span id="risk-score-display" class="text-2xl sm:text-3xl font-bold text-[#1A1814] font-mono">0 / 100</span>
+                </div>
+                <div class="h-10 w-px bg-[#E2DFD7]"></div>
+                <div class="text-right">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-[#8A8782] block">Analysis Speed</span>
+                  <span id="processing-time-display" class="text-xs font-mono text-teal-700 font-bold">0.00s</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Metrics Cards Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+              <div class="bg-[#FBF9F5] p-4 rounded-2xl border border-[#EAE7E0] transition-transform hover:-translate-y-0.5">
+                <span class="text-xs text-[#8A8782] font-semibold block">Total Clauses</span>
+                <p id="stat-total-clauses" class="text-2xl font-bold text-[#1A1814] mt-1 font-mono">0</p>
+              </div>
+              <div class="bg-[#FFF1F2] p-4 rounded-2xl border border-[#FECACA] transition-transform hover:-translate-y-0.5">
+                <span class="text-xs text-[#DC2626] font-semibold flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse"></span>
+                  <span>High Risk (Predatory)</span>
+                </span>
+                <p id="stat-high-risk" class="text-2xl font-bold text-[#DC2626] mt-1 font-mono">0</p>
+              </div>
+              <div class="bg-[#FFFBEB] p-4 rounded-2xl border border-[#FDE68A] transition-transform hover:-translate-y-0.5">
+                <span class="text-xs text-[#D97706] font-semibold flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+                  <span>Unusual (Caution)</span>
+                </span>
+                <p id="stat-med-risk" class="text-2xl font-bold text-[#D97706] mt-1 font-mono">0</p>
+              </div>
+              <div class="bg-[#F0FDF4] p-4 rounded-2xl border border-[#BBF7D0] transition-transform hover:-translate-y-0.5">
+                <span class="text-xs text-[#16803C] font-semibold flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-[#22C55E]"></span>
+                  <span>Fair & Standard</span>
+                </span>
+                <p id="stat-low-risk" class="text-2xl font-bold text-[#16803C] mt-1 font-mono">0</p>
+              </div>
+              <div class="bg-teal-50 p-4 rounded-2xl border border-teal-100 col-span-2 sm:col-span-1 transition-transform hover:-translate-y-0.5">
+                <span class="text-xs text-teal-800 font-semibold flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                  <span>Unusual Terms</span>
+                </span>
+                <p id="stat-unusual-count" class="text-2xl font-bold text-teal-800 mt-1 font-mono">0</p>
+              </div>
+            </div>
+
+            <!-- Red Flags Panel -->
+            <div id="red-flags-container" class="bg-[#FFF1F2] border border-[#FECACA] rounded-2xl p-5 sm:p-6 space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#DC2626] flex items-center space-x-2">
+                <i data-lucide="alert-octagon" class="w-4 h-4 text-[#EF4444]"></i>
+                <span>Critical Clauses Requiring Clarification Before Signing:</span>
+              </h4>
+              <ul id="red-flags-list" class="text-xs sm:text-sm text-[#991B1B] space-y-2 list-disc list-inside leading-relaxed font-medium"></ul>
+            </div>
+
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold text-[#8A8782] uppercase tracking-wider">Filter Clauses:</span>
+              <div class="flex bg-white p-1 rounded-xl border border-[#E5E2DA] text-xs shadow-2xs">
+                <button onclick="filterClauses('all')" id="filter-btn-all" class="px-3.5 py-1.5 rounded-lg font-semibold text-white bg-teal-700 shadow-2xs">All Clauses</button>
+                <button onclick="filterClauses('high')" id="filter-btn-high" class="px-3.5 py-1.5 rounded-lg font-semibold text-[#5A5751] hover:text-[#1A1814]">Predatory</button>
+                <button onclick="filterClauses('medium')" id="filter-btn-medium" class="px-3.5 py-1.5 rounded-lg font-semibold text-[#5A5751] hover:text-[#1A1814]">Unusual</button>
+                <button onclick="filterClauses('low')" id="filter-btn-low" class="px-3.5 py-1.5 rounded-lg font-semibold text-[#5A5751] hover:text-[#1A1814]">Standard</button>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button onclick="copyAllQuestions()" class="px-4 py-2 bg-white hover:bg-[#F9F7F3] text-[#2C2A26] rounded-xl text-xs font-semibold border border-[#D5D1C8] flex items-center space-x-2 transition-all shadow-2xs">
+                <i data-lucide="copy" class="w-3.5 h-3.5 text-teal-600"></i>
+                <span>Copy Negotiation Script</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dual-Pane Clause View -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Pane: Clause Cards List -->
+            <div class="lg:col-span-5 space-y-3 max-h-[850px] overflow-y-auto pr-1" id="clauses-list-container">
+              <!-- Populated dynamically -->
+            </div>
+
+            <!-- Right Pane: Sticky Clause Inspector -->
+            <div class="lg:col-span-7 sticky top-4">
+              <div id="clause-inspector" class="surface-card p-6 sm:p-8 rounded-3xl border border-[#E8E5DF] bg-white shadow-md space-y-5">
+                <div class="text-center py-20 text-[#8A8782]">
+                  <i data-lucide="mouse-pointer-click" class="w-10 h-10 mx-auto mb-3 opacity-60 text-teal-600 float-icon"></i>
+                  <h4 class="font-display text-base font-bold text-[#1A1814]">Select a Clause to Inspect</h4>
+                  <p class="text-xs text-[#5A5751] max-w-xs mx-auto mt-1">
+                    Click any clause on the left to reveal its plain-English breakdown, fair market baseline, and tailored negotiation script.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 2: FAIR TERMS REFERENCE GUIDE ================= -->
+      <div id="tab-knowledge_base" class="tab-content hidden space-y-6 max-w-6xl mx-auto">
+        <div class="surface-card p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] bg-white space-y-6 shadow-sm">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F3F4F6] pb-6">
+            <div>
+              <h2 class="text-2xl font-extrabold text-[#111827] flex items-center space-x-2.5">
+                <i data-lucide="book-open-check" class="w-6 h-6 text-teal-700"></i>
+                <span>Fair Terms & Standard Baselines Guide</span>
+              </h2>
+              <p class="text-sm text-[#4B5563] mt-1">A curated reference guide of what customary, fair contracts say across rental leases and consumer loans.</p>
+            </div>
+            <div>
+              <input type="text" id="kb-search-input" onkeyup="filterKB()" placeholder="Search standard terms..." class="bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl px-4 py-2 text-xs sm:text-sm text-[#1F2937] focus:outline-none focus:border-teal-600 focus:bg-white transition-all w-64">
+            </div>
+          </div>
+
+          <div id="kb-clauses-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 3: DEVELOPER / ADMIN VIEW: EVAL BENCHMARK ================= -->
+      <div id="tab-eval" class="tab-content hidden space-y-6 max-w-6xl mx-auto">
+        
+        <!-- Admin Header Banner -->
+        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
+            <span class="font-semibold">Developer & Admin View: Ground-Truth Model Evaluation Suite</span>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 bg-amber-100 rounded text-amber-800">Precision / Recall / F1</span>
+        </div>
+
+        <div class="surface-card p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] bg-white space-y-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F3F4F6] pb-6">
+            <div>
+              <h2 class="text-2xl font-extrabold text-[#111827]">Model Accuracy & Benchmark Suite</h2>
+              <p class="text-sm text-[#4B5563] mt-1">Live results on 20 labeled clauses. This small test set does not establish legal accuracy or performance on other documents.</p>
+            </div>
+            <button onclick="triggerEvaluation()" id="btn-run-eval" class="btn-primary px-5 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 shadow-sm">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span>Run Live Benchmark</span>
+            </button>
+          </div>
+
+          <!-- KPI Metrics Row -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
+              <span class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider block">Precision</span>
+              <p id="eval-precision" class="text-2xl font-black text-teal-700 mt-0.5 font-mono">100.0%</p>
+              <span class="text-[9px] text-[#9CA3AF]">TP / (TP + FP)</span>
+            </div>
+            <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
+              <span class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider block">Recall</span>
+              <p id="eval-recall" class="text-2xl font-black text-emerald-600 mt-0.5 font-mono">100.0%</p>
+              <span class="text-[9px] text-[#9CA3AF]">TP / (TP + FN)</span>
+            </div>
+            <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
+              <span class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider block">F1 Score</span>
+              <p id="eval-f1" class="text-2xl font-black text-blue-600 mt-0.5 font-mono">1.000</p>
+              <span class="text-[9px] text-[#9CA3AF]">Harmonic Mean</span>
+            </div>
+            <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
+              <span class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider block">Accuracy</span>
+              <p id="eval-accuracy" class="text-2xl font-black text-[#111827] mt-0.5 font-mono">100.0%</p>
+              <span class="text-[9px] text-[#9CA3AF]">(TP + TN) / Total</span>
+            </div>
+            <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
+              <span class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider block">Risk Match</span>
+              <p id="eval-risk-match" class="text-2xl font-black text-amber-600 mt-0.5 font-mono">100.0%</p>
+              <span class="text-[9px] text-[#9CA3AF]">Low / Med / High</span>
+            </div>
+            <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
+              <span class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider block">Test Samples</span>
+              <p id="eval-samples-count" class="text-2xl font-black text-[#374151] mt-0.5 font-mono">20</p>
+              <span class="text-[9px] text-[#9CA3AF]">Labeled Clauses</span>
+            </div>
+          </div>
+
+          <!-- Confusion Matrix & Stage 2 Audit -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            
+            <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#374151]">Confusion Matrix (Unusual Clause Detection)</h4>
+              <div class="grid grid-cols-2 gap-3 text-center text-xs">
+                <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl">
+                  <span class="text-[#065F46] block text-[10px]">True Positives (TP)</span>
+                  <span id="matrix-tp" class="text-xl font-black text-emerald-700 font-mono">9</span>
+                  <span class="text-[9px] text-[#047857] block">Flagged Predatory</span>
+                </div>
+                <div class="bg-white border border-[#E5E7EB] p-3.5 rounded-xl">
+                  <span class="text-[#6B7280] block text-[10px]">False Positives (FP)</span>
+                  <span id="matrix-fp" class="text-xl font-black text-[#DC2626] font-mono">0</span>
+                  <span class="text-[9px] text-[#9CA3AF] block">False Alarms</span>
+                </div>
+                <div class="bg-white border border-[#E5E7EB] p-3.5 rounded-xl">
+                  <span class="text-[#6B7280] block text-[10px]">False Negatives (FN)</span>
+                  <span id="matrix-fn" class="text-xl font-black text-[#DC2626] font-mono">0</span>
+                  <span class="text-[9px] text-[#9CA3AF] block">Missed Traps</span>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl">
+                  <span class="text-[#065F46] block text-[10px]">True Negatives (TN)</span>
+                  <span id="matrix-tn" class="text-xl font-black text-emerald-700 font-mono">11</span>
+                  <span class="text-[9px] text-[#047857] block">Passed Standard</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#374151]">Stage 2 Anti-Hallucination Verification</h4>
+              <div class="space-y-2 text-xs text-[#4B5563]">
+                <div class="flex justify-between py-1 border-b border-[#E5E7EB]">
+                  <span>High Risk Checks Executed:</span>
+                  <span id="stage2-checks-count" class="font-mono font-bold text-[#111827]">7</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-[#E5E7EB]">
+                  <span>False Positives Corrected:</span>
+                  <span id="stage2-corrections-count" class="font-mono font-bold text-emerald-600">0</span>
+                </div>
+                <div class="flex justify-between py-1">
+                  <span>Verification Logic:</span>
+                  <span class="text-teal-700 font-semibold">Gemini 1.5 Flash 2nd-pass audit</span>
+                </div>
+                <p class="text-[11px] text-[#6B7280] pt-1 leading-relaxed">Prevents over-flagging standard legal boilerplate (severability, merger clauses, joint and several liability) as predatory.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Labeled Test Cases Table -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#374151]">Test Cases Benchmark Audit Table:</h4>
+            <div class="overflow-x-auto rounded-xl border border-[#E5E7EB]">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-[#F9FAFB] text-[#6B7280] uppercase font-semibold text-[10px] border-b border-[#E5E7EB]">
+                  <tr>
+                    <th class="p-3.5">Clause Title</th>
+                    <th class="p-3.5">Category</th>
+                    <th class="p-3.5">Ground Truth</th>
+                    <th class="p-3.5">Predicted</th>
+                    <th class="p-3.5">Risk Level</th>
+                    <th class="p-3.5">Audit Outcome</th>
+                  </tr>
+                </thead>
+                <tbody id="eval-table-body" class="divide-y divide-[#E5E7EB] bg-white">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= TAB 4: DEVELOPER / ADMIN VIEW: ARCHITECTURE ================= -->
+      <div id="tab-architecture" class="tab-content hidden space-y-6 max-w-6xl mx-auto">
+        
+        <!-- Admin Header Banner -->
+        <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="cpu" class="w-4 h-4 text-blue-600"></i>
+            <span class="font-semibold">Developer & Admin View: System Pipeline Architecture</span>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 bg-blue-100 rounded text-blue-800">Cloud Gemini</span>
+        </div>
+
+        <div class="surface-card p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] bg-white space-y-6 shadow-sm">
+          <div>
+            <h2 class="text-2xl font-extrabold text-[#111827]">ClauseClear Pipeline Architecture</h2>
+            <p class="text-sm text-[#4B5563] mt-1">End-to-end design specifications, chunking heuristics, and anti-hallucination validation mechanisms.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
+              <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs border border-teal-100">1</div>
+              <h3 class="font-bold text-[#111827] text-sm">Legal Clause Chunking</h3>
+              <p class="text-xs text-[#6B7280] leading-relaxed">Unlike naive token windows that split clauses midway through a sentence, ClauseClear segments documents along legal structural boundaries (Section headers, Article numbers, Roman numerals) to preserve full legal context.</p>
+            </div>
+
+            <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
+              <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs border border-teal-100">2</div>
+              <h3 class="font-bold text-[#111827] text-sm">Cloud Vector Standard Retrieval</h3>
+              <p class="text-xs text-[#6B7280] leading-relaxed">Each clause is embedded and matched against a curated vector database of ~60 standard baseline contracts via <code>text-embedding-004</code>. This gives the model a concrete ground truth to compare against rather than relying on ungrounded intuition.</p>
+            </div>
+
+            <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
+              <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs border border-teal-100">3</div>
+              <h3 class="font-bold text-[#111827] text-sm">Stage 2 Validation Pass</h3>
+              <p class="text-xs text-[#6B7280] leading-relaxed">High-risk flags trigger a self-consistency check asking: <em>"Is this genuinely predatory or standard legalese unfamiliar to laypeople?"</em> This eliminates false alarms on standard boilerplate like severability or joint liability clauses.</p>
+            </div>
+          </div>
+
+          <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#374151]">Technical Stack Summary</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
+                <span class="text-[#9CA3AF] block text-[10px]">Backend Framework</span>
+                <span class="text-[#111827] font-semibold font-mono">FastAPI (Python)</span>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
+                <span class="text-[#9CA3AF] block text-[10px]">LLM & Verification</span>
+                <span class="text-[#111827] font-semibold font-mono">Gemini 1.5 Flash</span>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
+                <span class="text-[#9CA3AF] block text-[10px]">Cloud Embeddings</span>
+                <span class="text-[#111827] font-semibold font-mono">text-embedding-004</span>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
+                <span class="text-[#9CA3AF] block text-[10px]">Container Footprint</span>
+                <span class="text-emerald-600 font-semibold font-mono">&lt; 80 MB RAM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- API Key & AI Engine Modal Dialog -->
+  <div id="api-key-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="surface-card bg-white p-6 sm:p-7 rounded-3xl border border-[#E5E7EB] max-w-lg w-full space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#F3F4F6] pb-4">
+        <div>
+          <h3 class="text-base font-bold text-[#111827] flex items-center space-x-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-teal-600"></i>
+            <span>AI Engine & API Settings</span>
+          </h3>
+          <p class="text-xs text-[#6B7280] mt-0.5">Configure cloud LLM keys for deep clause reasoning and tailored negotiation questions.</p>
+        </div>
+        <button onclick="toggleApiKeyModal()" class="text-[#9CA3AF] hover:text-[#111827] p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Current Engine Status Banner -->
+      <div id="active-engine-banner" class="p-3.5 rounded-2xl bg-teal-50/80 border border-teal-200/70 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
+          <div>
+            <span class="text-[11px] font-semibold text-teal-900 uppercase tracking-wide">Active Engine:</span>
+            <span id="active-engine-name" class="text-xs font-bold text-teal-700 ml-1">Checking...</span>
+          </div>
+        </div>
+        <span id="active-engine-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-teal-800 border border-teal-200 shadow-sm">Ready</span>
+      </div>
+
+      <div id="runtime-key-controls" class="hidden space-y-4">
+        <!-- Groq Card (Primary & Recommended) -->
+        <div class="p-4 rounded-2xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="zap" class="w-4 h-4 text-amber-600"></i>
+              <span class="text-xs font-bold text-[#111827]">Groq (LLaMA 3.3 70B)</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">Recommended</span>
+            </div>
+            <span id="groq-status-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Not Set</span>
+          </div>
+          <p class="text-[11px] text-[#6B7280]">Blazing fast (~300 tok/s) and completely free. Generates unique, bespoke negotiation questions for every single clause.</p>
+          
+          <div class="space-y-1.5">
+            <label for="groq-key-input" class="text-[11px] font-semibold text-[#374151]">Groq API Key:</label>
+            <div class="flex space-x-2">
+              <input type="password" id="groq-key-input" placeholder="gsk_..." class="flex-1 bg-white border border-[#D1D5DB] rounded-xl px-3 py-2 text-xs font-mono text-[#111827] focus:outline-none focus:border-teal-600 shadow-sm">
+              <button onclick="saveGroqKey()" id="btn-save-groq" class="bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center space-x-1">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>Save Groq</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px]">
+            <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" class="text-teal-700 hover:text-teal-900 font-semibold underline flex items-center space-x-1">
+              <span>Get a free Groq API key</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+            <span class="text-[#9CA3AF]">Free & instant setup</span>
+          </div>
+        </div>
+
+        <!-- Google Gemini Card -->
+        <div class="p-4 rounded-2xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+              <span class="text-xs font-bold text-[#111827]">Google Gemini (1.5 Flash)</span>
+            </div>
+            <span id="gemini-status-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Not Set</span>
+          </div>
+          
+          <div class="space-y-1.5">
+            <label for="gemini-key-input" class="text-[11px] font-semibold text-[#374151]">Gemini API Key:</label>
+            <div class="flex space-x-2">
+              <input type="password" id="gemini-key-input" placeholder="AIzaSy..." class="flex-1 bg-white border border-[#D1D5DB] rounded-xl px-3 py-2 text-xs font-mono text-[#111827] focus:outline-none focus:border-teal-600 shadow-sm">
+              <button onclick="saveApiKey()" id="btn-save-gemini" class="bg-teal-700 hover:bg-teal-800 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center space-x-1">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>Save Gemini</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p id="managed-key-notice" class="text-xs text-[#6B7280]">Provider credentials are managed by the service operator and are not editable here.</p>
+
+      <div class="flex justify-between items-center pt-2 border-t border-[#F3F4F6]">
+        <p class="text-[11px] text-[#9CA3AF]">Provider credentials are configured for this service.</p>
+        <button onclick="toggleApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#6B7280] hover:bg-gray-100">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= AUTH MODAL (LOGIN & REGISTER) ================= -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="surface-card bg-white p-6 sm:p-8 rounded-3xl border border-[#E5E7EB] max-w-md w-full space-y-5 shadow-2xl relative">
+      
+      <!-- Close button -->
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-[#9CA3AF] hover:text-[#111827] transition-colors p-1.5 rounded-xl hover:bg-gray-100">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Brand & Header -->
+      <div class="text-center space-y-1.5">
+        <div class="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-tr from-teal-700 via-teal-600 to-teal-500 items-center justify-center text-white shadow-md shadow-teal-700/20 mb-1">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <h3 id="auth-modal-title" class="text-xl font-extrabold text-[#111827] tracking-tight">Welcome to ClauseClear</h3>
+        <p id="auth-modal-subtitle" class="text-xs text-[#6B7280]">Sign in to save, compare, and organize your contract analyses.</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex border-b border-[#E5E7EB]">
+        <button id="auth-tab-btn-login" onclick="setAuthTab('login')" class="auth-tab-btn flex-1 text-center active pb-2.5">
+          Sign In
+        </button>
+        <button id="auth-tab-btn-register" onclick="setAuthTab('register')" class="auth-tab-btn flex-1 text-center pb-2.5">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Quick Demo Login Pill -->
+      <div id="demo-login-box" class="hidden p-3.5 rounded-2xl bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-100 flex items-center justify-between shadow-xs">
+        <div>
+          <span class="text-xs font-bold text-teal-900 block">✨ Instant Demo Access</span>
+          <span class="text-[11px] text-teal-700">Pre-configured demo@clauseclear.com</span>
+        </div>
+        <button type="button" onclick="handleDemoLogin()" class="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
+          1-Click Login
+        </button>
+      </div>
+
+      <!-- Form Alert Banner -->
+      <div id="auth-alert" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+
+      <!-- Auth Form -->
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <!-- Name Field (Register only) -->
+        <div id="auth-name-group" class="hidden space-y-1.5">
+          <label for="auth-name" class="text-xs font-semibold text-[#374151] flex items-center space-x-1.5">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-teal-600"></i>
+            <span>Full Name</span>
+          </label>
+          <input type="text" id="auth-name" placeholder="Alex Morgan" class="w-full bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none focus:border-teal-600 focus:bg-white transition-all">
+        </div>
+
+        <!-- Email Field -->
+        <div class="space-y-1.5">
+          <label for="auth-email" class="text-xs font-semibold text-[#374151] flex items-center space-x-1.5">
+            <i data-lucide="mail" class="w-3.5 h-3.5 text-teal-600"></i>
+            <span>Email Address</span>
+          </label>
+          <input type="email" id="auth-email" required placeholder="you@example.com" class="w-full bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none focus:border-teal-600 focus:bg-white transition-all">
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="auth-password" class="text-xs font-semibold text-[#374151] flex items-center space-x-1.5">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-teal-600"></i>
+              <span>Password</span>
+            </label>
+            <span id="password-hint" class="text-[10px] text-[#9CA3AF]">Min. 6 characters</span>
+          </div>
+          <div class="relative">
+            <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-[#111827] focus:outline-none focus:border-teal-600 focus:bg-white transition-all font-mono">
+            <button type="button" onclick="togglePasswordVisibility('auth-password', 'pwd-toggle-icon-1')" class="absolute right-3 top-2.5 text-[#9CA3AF] hover:text-[#374151]">
+              <i id="pwd-toggle-icon-1" data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm Password Field (Register only) -->
+        <div id="auth-confirm-group" class="hidden space-y-1.5">
+          <label for="auth-confirm-password" class="text-xs font-semibold text-[#374151] flex items-center space-x-1.5">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-600"></i>
+            <span>Confirm Password</span>
+          </label>
+          <div class="relative">
+            <input type="password" id="auth-confirm-password" placeholder="••••••••" class="w-full bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-[#111827] focus:outline-none focus:border-teal-600 focus:bg-white transition-all font-mono">
+            <button type="button" onclick="togglePasswordVisibility('auth-confirm-password', 'pwd-toggle-icon-2')" class="absolute right-3 top-2.5 text-[#9CA3AF] hover:text-[#374151]">
+              <i id="pwd-toggle-icon-2" data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="auth-submit-btn" class="btn-primary w-full py-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-md shadow-teal-700/15 transition-all">
+          <span id="auth-submit-text">Sign In</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- Footer Switch Helper -->
+      <div class="text-center pt-2 border-t border-gray-100">
+        <span id="auth-footer-text" class="text-xs text-[#6B7280]">Don't have an account?</span>
+        <button type="button" id="auth-footer-toggle-btn" onclick="toggleAuthTab()" class="text-xs text-teal-700 hover:text-teal-800 font-bold ml-1 hover:underline">
+          Create Free Account
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= USER CONTRACT HISTORY MODAL ================= -->
+  <div id="history-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="surface-card bg-white rounded-3xl border border-[#E5E7EB] max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
+      
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-[#E5E7EB] flex items-center justify-between shrink-0 bg-[#FAFAF8]">
+        <div class="flex items-center space-x-3">
+          <div class="h-10 w-10 rounded-xl bg-teal-50 text-teal-700 border border-teal-100 flex items-center justify-center shadow-xs">
+            <i data-lucide="history" class="w-5 h-5 text-teal-600"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="text-lg font-extrabold text-[#111827]">My Contract History</h3>
+              <span id="history-modal-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-100">0 Contracts</span>
+            </div>
+            <p class="text-xs text-[#6B7280]">Saved legal analyses and risk evaluations for your account.</p>
+          </div>
+        </div>
+        <button onclick="closeHistoryModal()" class="text-[#9CA3AF] hover:text-[#111827] p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body / Scrollable History List -->
+      <div id="history-list-container" class="flex-1 overflow-y-auto p-6 space-y-3">
+        <!-- Dynamic history items or empty state rendered via JavaScript -->
+        <div id="history-loading-spinner" class="py-12 text-center text-[#6B7280]">
+          <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-teal-600 mb-2"></i>
+          <p class="text-xs">Loading your saved agreements...</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-[#E5E7EB] flex items-center justify-between shrink-0 bg-[#FAFAF8] text-xs text-[#6B7280]">
+        <span class="flex items-center space-x-1.5">
+          <i data-lucide="shield" class="w-3.5 h-3.5 text-teal-600"></i>
+          <span>Encrypted SQLite persistent storage</span>
+        </span>
+        <button onclick="closeHistoryModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-[#374151] transition-colors">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Floating Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+  <script src="/static/app.js?v=5.0"></script>
+
+  <!-- Scroll-reveal: observe .reveal elements and add .visible when in viewport -->
+  <script>
+    (function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      function observeAll() {
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      }
+
+      // Observe on load and whenever tabs switch (MutationObserver on main)
+      document.addEventListener('DOMContentLoaded', observeAll);
+
+      const main = document.querySelector('main');
+      if (main) {
+        const mutObs = new MutationObserver(observeAll);
+        mutObs.observe(main, { childList: true, subtree: true, attributes: true });
+      }
+
+      // Re-trigger when switching tabs (observe newly visible elements)
+      document.addEventListener('click', () => {
+        setTimeout(observeAll, 60);
+      });
+    })();
+  </script>
+</body>
+</html>
+
