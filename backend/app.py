@@ -42,6 +42,9 @@ app = FastAPI(
     description="Legal Document Simplifier & Risk Analyzer Backend",
     version="1.0.0",
     debug=config.DEBUG,
+    docs_url="/docs" if config.IS_DEVELOPMENT else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if config.IS_DEVELOPMENT else None,
 )
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -59,6 +62,30 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
+CONTENT_SECURITY_POLICY = (
+    "default-src 'self'; "
+    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; "
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    "font-src https://fonts.gstatic.com; "
+    "img-src 'self' data:; connect-src 'self'; "
+    "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+)
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    # Dev-only Swagger UI loads assets from a CDN that the policy would block.
+    if not (config.IS_DEVELOPMENT and request.url.path in ("/docs", "/openapi.json")):
+        response.headers["Content-Security-Policy"] = CONTENT_SECURITY_POLICY
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    if not config.IS_DEVELOPMENT:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 
 class TextAnalysisRequest(BaseModel):
     text: str
@@ -72,6 +99,11 @@ class EvalRequest(BaseModel):
 
 class ApiKeyUpdateRequest(BaseModel):
     gemini_api_key: str
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
 
 @app.get("/api/config")

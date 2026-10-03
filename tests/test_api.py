@@ -27,6 +27,12 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertIn("clauses", data)
         self.assertGreaterEqual(data["count"], 5)
 
+    def test_security_headers_present(self):
+        res = self.client.get("/health")
+        self.assertIn("default-src 'self'", res.headers["Content-Security-Policy"])
+        self.assertEqual(res.headers["X-Content-Type-Options"], "nosniff")
+        self.assertEqual(res.headers["X-Frame-Options"], "DENY")
+
     def test_runtime_provider_key_updates_disabled(self):
         with patch("backend.config.RUNTIME_API_KEY_UPDATES_ENABLED", False):
             gemini = self.client.post("/api/config/key", json={"gemini_api_key": "AIzaSyExampleKey123"})

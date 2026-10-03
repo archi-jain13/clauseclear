@@ -750,7 +750,7 @@ def analyze_clause_with_groq(clause: ExtractedClause, matched_standard: Optional
         "Content-Type": "application/json"
     }
     prompt = _build_llm_prompt(clause, matched_standard)
-    groq_model = os.environ.get("GROQ_MODEL") or getattr(config, "GROQ_MODEL", "llama-3.3-70b-versatile")
+    groq_model = os.environ.get("GROQ_MODEL") or getattr(config, "GROQ_MODEL", "openai/gpt-oss-120b")
     payload = {
         "model": groq_model,
         "messages": [
@@ -758,7 +758,8 @@ def analyze_clause_with_groq(clause: ExtractedClause, matched_standard: Optional
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.1,
-        "max_tokens": 1024,
+        "max_tokens": 4096,
+        "reasoning_effort": "low",
         "response_format": {"type": "json_object"}
     }
     try:

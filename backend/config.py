@@ -9,8 +9,8 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 KNOWLEDGE_BASE_DIR = BACKEND_DIR / "knowledge_base"
 EVALUATION_DIR = BACKEND_DIR / "evaluation"
 SAMPLES_DIR = BACKEND_DIR / "samples"
-CHROMA_PERSIST_DIR = BASE_DIR / "chroma_db"
-DATA_DIR = BACKEND_DIR / "data"
+CHROMA_PERSIST_DIR = Path(os.getenv("CHROMA_PERSIST_DIR", BASE_DIR / "chroma_db"))
+DATA_DIR = Path(os.getenv("DATA_DIR", BACKEND_DIR / "data"))
 DATABASE_PATH = DATA_DIR / "clauseclear.db"
 
 # Load local configuration before reading settings. Production platforms should
@@ -65,7 +65,7 @@ CORS_ORIGINS = [
 DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "groq")  # options: gemini, groq, local, openai, anthropic
 GEMINI_MODEL = "gemini-1.5-flash"
 GEMINI_EMBEDDING_MODEL = "text-embedding-004"
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")  # fast & capable Groq model
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")  # fast & capable Groq model
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 
 def set_runtime_api_key(key: str):

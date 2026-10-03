@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: clauseclear
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    numInstances: 1
+    disk:
+      name: clauseclear-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DATA_DIR
+        value: /var/data/db
+      - key: CHROMA_PERSIST_DIR
+        value: /var/data/chroma
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: DEFAULT_PROVIDER
+        value: groq

@@ -674,7 +674,7 @@ function selectClause(idx) {
           <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#9CA3AF]"></i>
           <span>Original Agreement Text:</span>
         </h5>
-        <button onclick="copyText('${escapeQuotes(clause.clause_text)}')" class="text-xs text-teal-700 hover:text-teal-800 flex items-center space-x-1 font-medium">
+        <button onclick="copyClauseField(${idx}, 'clause_text')" class="text-xs text-teal-700 hover:text-teal-800 flex items-center space-x-1 font-medium">
           <i data-lucide="copy" class="w-3.5 h-3.5"></i>
           <span>Copy</span>
         </button>
@@ -716,7 +716,7 @@ function selectClause(idx) {
           <i data-lucide="message-square-quote" class="w-4 h-4 text-[#D97706]"></i>
           <span>Polite Question to Ask Your Landlord / Lender:</span>
         </h5>
-        <button onclick="copyText('${escapeQuotes(clause.suggested_question_to_ask_landlord)}')" class="bg-white hover:bg-amber-50 text-[#92400E] border border-[#FDE68A] px-2.5 py-1 rounded-lg text-xs font-semibold shadow-sm flex items-center space-x-1">
+        <button onclick="copyClauseField(${idx}, 'suggested_question_to_ask_landlord')" class="bg-white hover:bg-amber-50 text-[#92400E] border border-[#FDE68A] px-2.5 py-1 rounded-lg text-xs font-semibold shadow-sm flex items-center space-x-1">
           <i data-lucide="copy" class="w-3 h-3"></i>
           <span>Copy Question</span>
         </button>
@@ -731,6 +731,11 @@ function selectClause(idx) {
   `;
 
   if (window.lucide) lucide.createIcons();
+}
+
+function copyClauseField(idx, field) {
+  const clause = currentAnalysis?.clauses?.[idx];
+  if (clause && typeof clause[field] === 'string') copyText(clause[field]);
 }
 
 function copyText(text) {
@@ -788,7 +793,7 @@ function renderKBGrid(clauses) {
     card.innerHTML = `
       <div class="flex items-center justify-between">
         <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700">${escapeHtml(c.category.replace(/_/g, ' '))}</span>
-        <span class="text-[10px] font-mono text-[#9CA3AF]">${c.id}</span>
+        <span class="text-[10px] font-mono text-[#9CA3AF]">${escapeHtml(c.id)}</span>
       </div>
       <h4 class="text-base font-bold text-[#111827]">${escapeHtml(c.title)}</h4>
       <p class="text-xs text-[#4B5563] leading-relaxed bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
@@ -877,7 +882,7 @@ function renderEvaluationResults(data) {
 
       tr.innerHTML = `
         <td class="p-3.5 font-semibold text-[#111827]">${escapeHtml(item.title)}</td>
-        <td class="p-3.5 font-mono text-[11px] text-teal-700">${item.pred_category}</td>
+        <td class="p-3.5 font-mono text-[11px] text-teal-700">${escapeHtml(item.pred_category)}</td>
         <td class="p-3.5">
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.ground_truth_unusual ? 'bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]' : 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'}">
             ${item.ground_truth_unusual ? 'Unusual' : 'Standard'}
@@ -888,7 +893,7 @@ function renderEvaluationResults(data) {
             ${item.pred_unusual ? 'Unusual' : 'Standard'}
           </span>
         </td>
-        <td class="p-3.5 uppercase text-[10px] font-bold font-mono ${item.risk_match ? 'text-[#374151]' : 'text-amber-600'}">${item.pred_risk}</td>
+        <td class="p-3.5 uppercase text-[10px] font-bold font-mono ${item.risk_match ? 'text-[#374151]' : 'text-amber-600'}">${escapeHtml(item.pred_risk)}</td>
         <td class="p-3.5">
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isPass ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}">
             ${isPass ? 'PASS' : 'FAIL'}
@@ -914,8 +919,7 @@ function escapeHtml(str) {
 }
 
 function escapeQuotes(str) {
-  if (!str) return '';
-  return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  return escapeHtml(str);
 }
 
 // Animated count-up
