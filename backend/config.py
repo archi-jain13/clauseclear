@@ -9,8 +9,9 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 KNOWLEDGE_BASE_DIR = BACKEND_DIR / "knowledge_base"
 EVALUATION_DIR = BACKEND_DIR / "evaluation"
 SAMPLES_DIR = BACKEND_DIR / "samples"
-CHROMA_PERSIST_DIR = Path(os.getenv("CHROMA_PERSIST_DIR", BASE_DIR / "chroma_db"))
 DATA_DIR = Path(os.getenv("DATA_DIR", BACKEND_DIR / "data"))
+LANCEDB_DIR = Path(os.getenv("LANCEDB_DIR", DATA_DIR / "lancedb"))
+LANCEDB_TABLE = "clauses"
 DATABASE_PATH = DATA_DIR / "clauseclear.db"
 
 # Load local configuration before reading settings. Production platforms should

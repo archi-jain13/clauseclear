@@ -11,4 +11,5 @@ numpy>=1.26.0
 reportlab>=4.1.0
 pyjwt>=2.8.0
 bcrypt>=4.0.0
-chromadb>=0.4.24
+lancedb>=0.20.0
+sentence-transformers>=2.5.0

@@ -3,8 +3,9 @@
 .env.*
 !.env.example
 
-# User data and vector index
-backend/data/
+# User data, LanceDB index and generated datasets; the scripts in backend/data stay tracked
+backend/data/*
+!backend/data/*.py
 chroma_db/
 *.db
 *.sqlite3

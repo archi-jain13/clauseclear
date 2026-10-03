@@ -997,7 +997,7 @@
             <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
               <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs border border-teal-100">2</div>
               <h3 class="font-bold text-[#111827] text-sm">Vector Standard Retrieval</h3>
-              <p class="text-xs text-[#6B7280] leading-relaxed">Each clause is embedded and matched against a curated vector database of standard baseline clauses, using ChromaDB with a built-in MiniLM embedding model and a TF-IDF fallback. This gives the model a concrete reference to compare against rather than relying on ungrounded intuition.</p>
+              <p class="text-xs text-[#6B7280] leading-relaxed">Each clause is embedded and matched against a curated vector database of standard baseline clauses, using LanceDB with sentence-transformers MiniLM embeddings and a TF-IDF fallback. This gives the model a concrete reference to compare against rather than relying on ungrounded intuition.</p>
             </div>
 
             <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
@@ -1020,7 +1020,7 @@
               </div>
               <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
                 <span class="text-[#9CA3AF] block text-[10px]">Vector Retrieval</span>
-                <span class="text-[#111827] font-semibold font-mono">ChromaDB + MiniLM</span>
+                <span class="text-[#111827] font-semibold font-mono">LanceDB + MiniLM</span>
               </div>
               <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
                 <span class="text-[#9CA3AF] block text-[10px]">Fallback & Storage</span>

@@ -9,6 +9,13 @@ from backend.config import DEFAULT_PROVIDER
 from backend.ingestion.chunker import ExtractedClause
 from backend.knowledge_base.vector_store import get_clause_store
 from backend.analyzer.schemas import AnalyzedClause, ValidationAudit
+from backend.analyzer.evidence import (
+    MEDIUM_VOTE_SCORE,
+    format_evidence_for_prompt,
+    neighbour_vote,
+    vote_deviation_text,
+    vote_flags_unfair,
+)
 
 
 def _get_active_groq_key() -> str:
@@ -180,7 +187,11 @@ def generate_tailored_clause_question(
     return f"Regarding {title_ref}: Could you confirm how this provision applies during standard day-to-day operations, and how any formal notifications or requests under this section should be submitted in writing?"
 
 
-def analyze_clause_local(clause: ExtractedClause, matched_standard: Optional[Dict[str, Any]]) -> AnalyzedClause:
+def analyze_clause_local(
+    clause: ExtractedClause,
+    matched_standard: Optional[Dict[str, Any]],
+    evidence: Optional[Dict[str, List[Dict[str, Any]]]] = None,
+) -> AnalyzedClause:
     """
     Local high-performance hybrid analyzer using legal rule heuristics + vector baseline comparison.
     """
@@ -211,6 +222,15 @@ def analyze_clause_local(clause: ExtractedClause, matched_standard: Optional[Dic
                 risk_level = "medium"
                 is_unusual = True
                 category = cat
+
+    # Nearby labeled examples can raise an unflagged clause to medium; they never override a rule hit.
+    if risk_level == "low":
+        vote = neighbour_vote(evidence)
+        if vote_flags_unfair(vote):
+            deviations.append(vote_deviation_text(vote))
+            risk_score = max(risk_score, MEDIUM_VOTE_SCORE)
+            risk_level = "medium"
+            is_unusual = True
 
     # Comprehensive knowledge base: contextual explanations and questions for every clause type and risk level
     CLAUSE_KNOWLEDGE_BASE = {
@@ -599,7 +619,12 @@ def analyze_clause_local(clause: ExtractedClause, matched_standard: Optional[Dic
     )
 
 
-def analyze_clause_with_gemini(clause: ExtractedClause, matched_standard: Optional[Dict[str, Any]], api_key: str) -> Optional[AnalyzedClause]:
+def analyze_clause_with_gemini(
+    clause: ExtractedClause,
+    matched_standard: Optional[Dict[str, Any]],
+    api_key: str,
+    evidence: Optional[Dict[str, List[Dict[str, Any]]]] = None,
+) -> Optional[AnalyzedClause]:
     """Calls Google Gemini API for structured clause risk assessment."""
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     
@@ -615,6 +640,8 @@ Title: {clause.clause_title}
 Text: {clause.clause_text}
 
 {standard_context}
+
+{format_evidence_for_prompt(evidence)}
 
 Return a valid JSON object matching this schema:
 {{
@@ -674,11 +701,16 @@ Output ONLY raw JSON. No markdown codeblocks, no commentary."""
     return None
 
 
-def _build_llm_prompt(clause: ExtractedClause, matched_standard: Optional[Dict[str, Any]]) -> str:
+def _build_llm_prompt(
+    clause: ExtractedClause,
+    matched_standard: Optional[Dict[str, Any]],
+    evidence: Optional[Dict[str, List[Dict[str, Any]]]] = None,
+) -> str:
     """Shared prompt builder for all LLM providers."""
     standard_context = ""
     if matched_standard:
         standard_context = f"Baseline Standard: {matched_standard.get('baseline_text', '')}\nAcceptable Range: {matched_standard.get('standard_acceptable_range', '')}"
+    evidence_context = format_evidence_for_prompt(evidence)
 
     return f"""You are a specialized Legal Document Risk Analyst helping a tenant or borrower understand their contract.
 Analyze the following legal clause and return a structured JSON risk assessment.
@@ -687,6 +719,8 @@ Clause Title: {clause.clause_title}
 Clause Text: {clause.clause_text}
 
 {standard_context}
+
+{evidence_context}
 
 Return ONLY a valid JSON object with these exact fields:
 {{
@@ -742,14 +776,19 @@ def _parse_llm_json(raw: str, clause: ExtractedClause, matched_standard: Optiona
         return None
 
 
-def analyze_clause_with_groq(clause: ExtractedClause, matched_standard: Optional[Dict[str, Any]], api_key: str) -> Optional[AnalyzedClause]:
+def analyze_clause_with_groq(
+    clause: ExtractedClause,
+    matched_standard: Optional[Dict[str, Any]],
+    api_key: str,
+    evidence: Optional[Dict[str, List[Dict[str, Any]]]] = None,
+) -> Optional[AnalyzedClause]:
     """Calls Groq API (OpenAI-compatible) for LLM-powered structured clause analysis."""
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    prompt = _build_llm_prompt(clause, matched_standard)
+    prompt = _build_llm_prompt(clause, matched_standard, evidence)
     groq_model = os.environ.get("GROQ_MODEL") or getattr(config, "GROQ_MODEL", "openai/gpt-oss-120b")
     payload = {
         "model": groq_model,
@@ -784,6 +823,7 @@ def analyze_clause(clause: ExtractedClause, provider: Optional[str] = None) -> A
     store = get_clause_store()
     retrieved = store.retrieve_top_k(clause.clause_text, k=1)
     matched_standard = retrieved[0] if retrieved else None
+    evidence = store.retrieve_evidence(clause.clause_text)
 
     # Dynamically resolve active keys
     groq_key = _get_active_groq_key()
@@ -792,15 +832,15 @@ def analyze_clause(clause: ExtractedClause, provider: Optional[str] = None) -> A
 
     # Groq: try whenever a key exists, unless local-only analysis was requested
     if groq_key and active_provider != "local":
-        groq_res = analyze_clause_with_groq(clause, matched_standard, groq_key)
+        groq_res = analyze_clause_with_groq(clause, matched_standard, groq_key, evidence)
         if groq_res:
             return groq_res
 
     # Gemini: fallback if Groq unavailable and Gemini key exists
     if gemini_key and active_provider != "local" and (active_provider == "gemini" or not groq_key):
-        gemini_res = analyze_clause_with_gemini(clause, matched_standard, gemini_key)
+        gemini_res = analyze_clause_with_gemini(clause, matched_standard, gemini_key, evidence)
         if gemini_res:
             return gemini_res
 
     # Final fallback: Local Hybrid Rule Engine with tailored questions
-    return analyze_clause_local(clause, matched_standard)
+    return analyze_clause_local(clause, matched_standard, evidence)

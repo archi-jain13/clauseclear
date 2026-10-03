@@ -1,0 +1,3 @@
+-r requirements.txt
+# Only needed to run `python -m backend.data.ingest_datasets`; not required by the running app.
+datasets>=3.0.0

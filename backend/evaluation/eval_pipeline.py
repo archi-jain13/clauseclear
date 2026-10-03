@@ -1,9 +1,12 @@
+import argparse
 import json
+import random
 import time
+from collections import Counter
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
-from backend.config import EVALUATION_DIR
+from backend.config import DATA_DIR, EVALUATION_DIR
 from backend.ingestion.chunker import ExtractedClause
 from backend.analyzer.comparator import analyze_clause
 from backend.analyzer.validator import run_validation_pass
@@ -149,6 +152,179 @@ def run_evaluation_benchmark(provider: str = "local") -> Dict[str, Any]:
     }
 
 
+MERGED_DATA_PATH = DATA_DIR / "clauses_merged.jsonl"
+# ingest_datasets drops ids already seen in the test split from train/validation, so these rows are unseen elsewhere.
+HOLDOUT_ID_PREFIX = "claudette-test-"
+DEFAULT_HOLDOUT_SIZE = 500
+UNUSUAL_RISK_LEVELS = ("medium", "high")
+
+
+def load_claudette_holdout(path: Path, sample_size: int, seed: int) -> List[Dict[str, Any]]:
+    """Returns a seeded random sample of labeled CLAUDETTE test-split clauses from the merged dataset."""
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found. Run `python -m backend.data.ingest_datasets` to create it."
+        )
+    pool = []
+    with open(path, "r", encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            if (
+                record.get("source") == "claudette"
+                and str(record.get("id", "")).startswith(HOLDOUT_ID_PREFIX)
+                and record.get("risk_level") in ("low", "medium", "high")
+            ):
+                pool.append(record)
+    if not pool:
+        raise ValueError(f"No labeled CLAUDETTE test-split records found in {path}.")
+    pool.sort(key=lambda r: r["id"])
+    return random.Random(seed).sample(pool, min(sample_size, len(pool)))
+
+
+def _binary_metrics(tp: int, fp: int, tn: int, fn: int) -> Dict[str, Any]:
+    total = tp + fp + tn + fn
+    precision = round(tp / (tp + fp), 4) if (tp + fp) > 0 else 0.0
+    recall = round(tp / (tp + fn), 4) if (tp + fn) > 0 else 0.0
+    f1 = round(2 * precision * recall / (precision + recall), 4) if (precision + recall) > 0 else 0.0
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1_score": f1,
+        "accuracy": round((tp + tn) / total, 4) if total else 0.0,
+        "tp": tp, "fp": fp, "tn": tn, "fn": fn,
+    }
+
+
+def run_claudette_holdout_benchmark(
+    provider: str = "local",
+    sample_size: int = DEFAULT_HOLDOUT_SIZE,
+    seed: int = 13,
+    data_path: Path = MERGED_DATA_PATH,
+) -> Dict[str, Any]:
+    """
+    Evaluates unusual-clause detection on a held-out CLAUDETTE sample.
+    Ground truth: medium and high unfairness count as unusual, clearly fair as standard.
+    """
+    samples = load_claudette_holdout(data_path, sample_size, seed)
+    start_time = time.time()
+
+    tp = fp = tn = fn = risk_matches = 0
+    by_truth: Dict[str, Counter] = {level: Counter() for level in ("low", "medium", "high")}
+    false_positives: List[Dict[str, Any]] = []
+    false_negatives: List[Dict[str, Any]] = []
+
+    for sample in samples:
+        text = sample["text"]
+        clause = ExtractedClause(
+            clause_id=sample["id"],
+            clause_number="1",
+            clause_title="Terms of Service clause",
+            clause_text=text,
+            raw_text=text,
+            start_char=0,
+            end_char=len(text),
+            word_count=len(text.split()),
+        )
+        validated = run_validation_pass(analyze_clause(clause, provider=provider), provider=provider)
+
+        gt_risk = sample["risk_level"]
+        gt_unusual = gt_risk in UNUSUAL_RISK_LEVELS
+        pred_unusual = bool(validated.is_unusual)
+
+        by_truth[gt_risk]["total"] += 1
+        by_truth[gt_risk]["predicted_unusual"] += int(pred_unusual)
+        risk_matches += int(validated.risk_level.lower() == gt_risk)
+
+        if gt_unusual and pred_unusual:
+            tp += 1
+        elif not gt_unusual and pred_unusual:
+            fp += 1
+            if len(false_positives) < 5:
+                false_positives.append({"id": sample["id"], "text": text[:200], "pred_risk": validated.risk_level})
+        elif not gt_unusual and not pred_unusual:
+            tn += 1
+        else:
+            fn += 1
+            if len(false_negatives) < 5:
+                false_negatives.append({"id": sample["id"], "text": text[:200], "truth": gt_risk})
+
+    total = len(samples)
+    return {
+        "dataset_name": "CLAUDETTE-ToS held-out test split (CodeHima/TOS_Dataset)",
+        "total_test_samples": total,
+        "label_distribution": {level: by_truth[level]["total"] for level in by_truth},
+        "provider": provider,
+        "seed": seed,
+        "elapsed_seconds": round(time.time() - start_time, 3),
+        "metrics": {
+            "unusual_clause_detection": _binary_metrics(tp, fp, tn, fn),
+            "risk_level_accuracy": round(risk_matches / total, 4) if total else 0.0,
+            "flagged_unusual_by_true_label": {
+                level: {"total": c["total"], "flagged": c["predicted_unusual"]} for level, c in by_truth.items()
+            },
+        },
+        "sample_false_positives": false_positives,
+        "sample_false_negatives": false_negatives,
+    }
+
+
+def run_combined_benchmark(
+    provider: str = "local",
+    include_claudette: bool = False,
+    holdout_size: int = DEFAULT_HOLDOUT_SIZE,
+    seed: int = 13,
+    data_path: Path = MERGED_DATA_PATH,
+) -> Dict[str, Any]:
+    """Runs the hand-labeled benchmark and, optionally, the CLAUDETTE holdout; results are kept separate."""
+    return {
+        "hand_labeled": run_evaluation_benchmark(provider=provider),
+        "claudette_holdout": (
+            run_claudette_holdout_benchmark(provider, holdout_size, seed, data_path) if include_claudette else None
+        ),
+    }
+
+
+def format_combined_summary(combined: Dict[str, Any]) -> str:
+    """Formats both benchmarks side by side so neither number hides the other."""
+    hand = combined["hand_labeled"]
+    holdout = combined["claudette_holdout"]
+    hm = hand["metrics"]["unusual_clause_detection"]
+
+    lines = [format_eval_summary(hand)]
+    if holdout is None:
+        return lines[0]
+
+    cm = holdout["metrics"]["unusual_clause_detection"]
+    dist = holdout["label_distribution"]
+    flagged = holdout["metrics"]["flagged_unusual_by_true_label"]
+
+    def pct(value: float) -> str:
+        return f"{value * 100:.1f}%"
+
+    lines.append(f"""
+# Hand-labeled set vs CLAUDETTE holdout
+
+| Metric | Hand-labeled set | CLAUDETTE holdout |
+|---|---|---|
+| Samples | {hand['total_test_samples']} | {holdout['total_test_samples']} |
+| Precision | {pct(hm['precision'])} | {pct(cm['precision'])} |
+| Recall | {pct(hm['recall'])} | {pct(cm['recall'])} |
+| F1-Score | {pct(hm['f1_score'])} | {pct(cm['f1_score'])} |
+| Accuracy | {pct(hm['accuracy'])} | {pct(cm['accuracy'])} |
+| Risk-level accuracy | {pct(hand['metrics']['risk_level_accuracy'])} | {pct(holdout['metrics']['risk_level_accuracy'])} |
+
+CLAUDETTE holdout: provider `{holdout['provider']}`, seed {holdout['seed']}, labels low/medium/high = {dist['low']}/{dist['medium']}/{dist['high']}.
+Confusion matrix (TP/FP/TN/FN): {cm['tp']}/{cm['fp']}/{cm['tn']}/{cm['fn']}.
+Baseline accuracy of always answering "standard": {pct(dist['low'] / holdout['total_test_samples'])} (compare with Accuracy above).
+Flagged unusual by true label: low {flagged['low']['flagged']}/{flagged['low']['total']}, medium {flagged['medium']['flagged']}/{flagged['medium']['total']}, high {flagged['high']['flagged']}/{flagged['high']['total']}.
+
+CLAUDETTE sentences come from online terms of service, while the rules and baselines target leases and loans, so treat the two columns as different domains.
+""")
+    return "\n".join(lines)
+
+
 def format_eval_summary(eval_res: Dict[str, Any]) -> str:
     """Formats evaluation results into a clean markdown table."""
     m = eval_res["metrics"]["unusual_clause_detection"]
@@ -185,5 +361,20 @@ def format_eval_summary(eval_res: Dict[str, Any]) -> str:
 
 
 if __name__ == "__main__":
-    res = run_evaluation_benchmark(provider="local")
-    print(format_eval_summary(res))
+    parser = argparse.ArgumentParser(description="Run the ClauseClear evaluation suite.")
+    parser.add_argument("--provider", default="local", help="Analysis provider; 'local' makes no cloud calls.")
+    parser.add_argument("--claudette-holdout", action="store_true",
+                        help="Also evaluate a held-out CLAUDETTE sample from clauses_merged.jsonl.")
+    parser.add_argument("--holdout-size", type=int, default=DEFAULT_HOLDOUT_SIZE, help="Clauses sampled for the holdout.")
+    parser.add_argument("--seed", type=int, default=13, help="Seed for holdout sampling.")
+    parser.add_argument("--data-file", type=Path, default=MERGED_DATA_PATH, help="Merged dataset JSONL.")
+    args = parser.parse_args()
+
+    combined = run_combined_benchmark(
+        provider=args.provider,
+        include_claudette=args.claudette_holdout,
+        holdout_size=args.holdout_size,
+        seed=args.seed,
+        data_path=args.data_file,
+    )
+    print(format_combined_summary(combined))
