@@ -185,6 +185,9 @@ def run_validation_pass(clause: AnalyzedClause, provider: Optional[str] = None) 
     gemini_key = (os.environ.get("GEMINI_API_KEY") or getattr(config, "GEMINI_API_KEY", "") or "").strip()
 
     # Try Groq validation first if key is present
+    if provider == "local":
+        return validate_high_risk_clause_local(clause)
+
     if groq_key:
         validated = validate_high_risk_clause_groq(clause, groq_key)
         if validated:

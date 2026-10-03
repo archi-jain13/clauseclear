@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadKnowledgeBase();
   checkApiConfig();
   checkAuthStatus();
-  triggerEvaluation(true);
 
   // Close user dropdown when clicking outside
   document.addEventListener('click', (e) => {
@@ -837,7 +836,7 @@ async function triggerEvaluation(isInitial = false) {
     const res = await fetch('/api/eval/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: 'gemini', api_key: runtimeApiKey || null })
+      body: JSON.stringify({ provider: 'local' })
     });
 
     if (!res.ok) throw new Error('Benchmark run failed');

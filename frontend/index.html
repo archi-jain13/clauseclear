@@ -122,7 +122,7 @@
             <i data-lucide="book-open-check" class="w-4 h-4 text-[#6B7280]"></i>
             <span>Fair Terms Guide</span>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-[#4B5563] font-medium" id="sidebar-kb-count">60+</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-[#4B5563] font-medium" id="sidebar-kb-count">14</span>
         </button>
 
         <!-- 4. Contract History -->
@@ -429,8 +429,8 @@
           </div>
           <div class="trust-stat flex flex-col items-center text-center px-6 space-y-1.5 reveal reveal-delay-3">
             <i data-lucide="scale" class="w-6 h-6 text-teal-700 mb-1" aria-hidden="true"></i>
-            <span class="text-sm font-semibold text-[#1A1814]">60+ Baselines</span>
-            <span class="text-xs text-[#8A8782] leading-snug">Benchmarked against real consumer laws</span>
+            <span class="text-sm font-semibold text-[#1A1814]">Curated Baselines</span>
+            <span class="text-xs text-[#8A8782] leading-snug">Compared against a library of standard clause terms</span>
           </div>
         </div>
 
@@ -996,8 +996,8 @@
 
             <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
               <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs border border-teal-100">2</div>
-              <h3 class="font-bold text-[#111827] text-sm">Cloud Vector Standard Retrieval</h3>
-              <p class="text-xs text-[#6B7280] leading-relaxed">Each clause is embedded and matched against a curated vector database of ~60 standard baseline contracts via <code>text-embedding-004</code>. This gives the model a concrete ground truth to compare against rather than relying on ungrounded intuition.</p>
+              <h3 class="font-bold text-[#111827] text-sm">Vector Standard Retrieval</h3>
+              <p class="text-xs text-[#6B7280] leading-relaxed">Each clause is embedded and matched against a curated vector database of standard baseline clauses, using ChromaDB with a built-in MiniLM embedding model and a TF-IDF fallback. This gives the model a concrete reference to compare against rather than relying on ungrounded intuition.</p>
             </div>
 
             <div class="bg-[#F9FAFB] p-5 rounded-xl border border-[#E5E7EB] space-y-2.5">
@@ -1016,15 +1016,15 @@
               </div>
               <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
                 <span class="text-[#9CA3AF] block text-[10px]">LLM & Verification</span>
-                <span class="text-[#111827] font-semibold font-mono">Gemini 1.5 Flash</span>
+                <span class="text-[#111827] font-semibold font-mono">Groq gpt-oss-120b</span>
               </div>
               <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
-                <span class="text-[#9CA3AF] block text-[10px]">Cloud Embeddings</span>
-                <span class="text-[#111827] font-semibold font-mono">text-embedding-004</span>
+                <span class="text-[#9CA3AF] block text-[10px]">Vector Retrieval</span>
+                <span class="text-[#111827] font-semibold font-mono">ChromaDB + MiniLM</span>
               </div>
               <div class="p-3 bg-white rounded-lg border border-[#E5E7EB]">
-                <span class="text-[#9CA3AF] block text-[10px]">Container Footprint</span>
-                <span class="text-emerald-600 font-semibold font-mono">&lt; 80 MB RAM</span>
+                <span class="text-[#9CA3AF] block text-[10px]">Fallback & Storage</span>
+                <span class="text-emerald-600 font-semibold font-mono">TF-IDF + SQLite</span>
               </div>
             </div>
           </div>

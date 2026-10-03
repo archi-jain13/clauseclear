@@ -790,14 +790,14 @@ def analyze_clause(clause: ExtractedClause, provider: Optional[str] = None) -> A
     gemini_key = _get_active_gemini_key()
     active_provider = provider or getattr(config, "DEFAULT_PROVIDER", "groq")
 
-    # Groq: try whenever a key exists (fastest, highest quality)
-    if groq_key:
+    # Groq: try whenever a key exists, unless local-only analysis was requested
+    if groq_key and active_provider != "local":
         groq_res = analyze_clause_with_groq(clause, matched_standard, groq_key)
         if groq_res:
             return groq_res
 
     # Gemini: fallback if Groq unavailable and Gemini key exists
-    if gemini_key and (active_provider == "gemini" or not groq_key):
+    if gemini_key and active_provider != "local" and (active_provider == "gemini" or not groq_key):
         gemini_res = analyze_clause_with_gemini(clause, matched_standard, gemini_key)
         if gemini_res:
             return gemini_res

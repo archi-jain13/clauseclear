@@ -94,7 +94,7 @@ class TextAnalysisRequest(BaseModel):
 
 
 class EvalRequest(BaseModel):
-    provider: Optional[str] = "gemini"
+    provider: Optional[str] = "local"
 
 
 class ApiKeyUpdateRequest(BaseModel):

@@ -1,10 +1,29 @@
 import unittest
+from unittest.mock import patch
 from backend.ingestion.chunker import ExtractedClause
 from backend.analyzer.comparator import analyze_clause
 from backend.analyzer.validator import run_validation_pass
 
 
 class TestAnalyzer(unittest.TestCase):
+
+    def test_local_provider_never_calls_cloud(self):
+        clause = ExtractedClause(
+            clause_id="test-local",
+            clause_number="1",
+            clause_title="Security Deposit",
+            clause_text="The security deposit is non-refundable and forfeited in full.",
+            raw_text="",
+            start_char=0,
+            end_char=60,
+            word_count=10
+        )
+        env = {"GROQ_API_KEY": "gsk_test_key_for_local_check", "GEMINI_API_KEY": "AIzaSyTestKeyForLocalCheck"}
+        with patch.dict("os.environ", env), patch("requests.post") as mock_post:
+            analyzed = analyze_clause(clause, provider="local")
+            run_validation_pass(analyzed, provider="local")
+
+        mock_post.assert_not_called()
 
     def test_predatory_clause_detection(self):
         clause = ExtractedClause(
